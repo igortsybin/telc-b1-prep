@@ -1,0 +1,2387 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TELC B1 — Подготовка v2.0</title>
+<style>
+  :root {
+    --black: #1a1a2e;
+    --red: #e63946;
+    --gold: #f4a261;
+    --green: #2a9d8f;
+    --blue: #457b9d;
+    --light: #f8f9fa;
+    --card: #ffffff;
+    --border: #e0e0e0;
+    --text: #2d3436;
+    --muted: #636e72;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f0f2f5; color: var(--text); min-height: 100vh; }
+
+  /* NAV */
+  .nav { background: var(--black); color: white; padding: 0 20px; display: flex; align-items: center; gap: 0; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.3); flex-wrap: wrap; }
+  .nav-logo { font-size: 1.2rem; font-weight: 700; padding: 14px 20px 14px 0; color: var(--gold); white-space: nowrap; border-right: 1px solid #333; margin-right: 10px; }
+  .nav-logo span { color: white; }
+  .nav-btn { background: none; border: none; color: #ccc; padding: 14px 14px; cursor: pointer; font-size: 0.85rem; transition: all .2s; border-bottom: 3px solid transparent; white-space: nowrap; }
+  .nav-btn:hover { color: white; }
+  .nav-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
+  .nav-progress { margin-left: auto; display: flex; align-items: center; gap: 10px; padding: 10px 0; }
+  .xp-badge { background: var(--gold); color: var(--black); border-radius: 20px; padding: 4px 12px; font-weight: 700; font-size: 0.85rem; }
+
+  /* PAGES */
+  .page { display: none; padding: 24px 20px; max-width: 960px; margin: 0 auto; }
+  .page.active { display: block; }
+
+  /* CARDS */
+  .card { background: var(--card); border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin-bottom: 16px; }
+  .card h2 { font-size: 1.15rem; margin-bottom: 12px; color: var(--black); }
+  .card h3 { font-size: 1rem; margin-bottom: 8px; }
+
+  /* ROADMAP */
+  .stages { display: grid; gap: 16px; }
+  .stage { border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .stage-header { padding: 16px 20px; display: flex; align-items: center; gap: 14px; cursor: pointer; }
+  .stage-header .badge { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1rem; flex-shrink: 0; }
+  .stage-info { flex: 1; }
+  .stage-info h3 { font-size: 1rem; font-weight: 700; }
+  .stage-info p { font-size: 0.82rem; opacity: 0.85; margin-top: 2px; }
+  .stage-progress-bar { height: 6px; background: rgba(255,255,255,0.3); border-radius: 3px; margin-top: 6px; overflow: hidden; }
+  .stage-progress-fill { height: 100%; border-radius: 3px; background: white; transition: width .4s; }
+  .stage-content { background: white; padding: 0 20px; max-height: 0; overflow: hidden; transition: max-height .3s, padding .3s; }
+  .stage-content.open { max-height: 1000px; padding: 16px 20px 20px; }
+  .milestone-list { list-style: none; }
+  .milestone-list li { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+  .milestone-list li:last-child { border-bottom: none; }
+  .milestone-list li .check { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; margin-top: 1px; font-size: 0.7rem; transition: all .2s; }
+  .milestone-list li .check.done { background: var(--green); border-color: var(--green); color: white; }
+
+  .stage-a1 .stage-header { background: linear-gradient(135deg, #457b9d, #1d3557); color: white; }
+  .stage-a1 .badge { background: rgba(255,255,255,0.2); color: white; }
+  .stage-a2 .stage-header { background: linear-gradient(135deg, #2a9d8f, #1a7a6e); color: white; }
+  .stage-a2 .badge { background: rgba(255,255,255,0.2); color: white; }
+  .stage-b1 .stage-header { background: linear-gradient(135deg, #e63946, #c1121f); color: white; }
+  .stage-b1 .badge { background: rgba(255,255,255,0.2); color: white; }
+
+  /* VOCAB */
+  .vocab-controls { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
+  .vocab-controls select, .vocab-controls input { padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.9rem; background: white; }
+  .vocab-controls input { flex: 1; min-width: 160px; }
+  .btn { padding: 9px 18px; border-radius: 8px; border: none; cursor: pointer; font-size: 0.9rem; font-weight: 600; transition: all .2s; }
+  .btn-primary { background: var(--black); color: white; }
+  .btn-primary:hover { background: #2d3a5e; }
+  .btn-success { background: var(--green); color: white; }
+  .btn-danger { background: var(--red); color: white; }
+  .btn-outline { background: white; color: var(--black); border: 2px solid var(--border); }
+  .btn-outline:hover { border-color: var(--black); }
+  .btn-gold { background: var(--gold); color: var(--black); }
+
+  /* FLASHCARD */
+  .flashcard-area { perspective: 1000px; display: flex; flex-direction: column; align-items: center; }
+  .flashcard-nav { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; font-size: 0.9rem; color: var(--muted); }
+  .flashcard-wrap { width: 100%; max-width: 480px; height: 380px; position: relative; cursor: pointer; }
+  .flashcard { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform .5s; }
+  .flashcard.flipped { transform: rotateY(180deg); }
+  .fc-front, .fc-back { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
+  .fc-front { background: white; border: 2px solid var(--border); }
+  .fc-back { background: var(--black); color: white; transform: rotateY(180deg); }
+  .fc-emoji { font-size: 5rem; margin-bottom: 12px; }
+  .fc-word { font-size: 2rem; font-weight: 700; color: var(--black); text-align: center; }
+  .fc-article { font-size: 1.1rem; color: var(--blue); font-weight: 600; }
+  .fc-type { font-size: 0.8rem; color: var(--muted); margin-top: 4px; background: #f0f2f5; padding: 2px 10px; border-radius: 20px; }
+  .fc-hint { font-size: 0.8rem; color: var(--muted); margin-top: 16px; }
+  .fc-back .fc-translation { font-size: 1.5rem; font-weight: 700; margin-bottom: 12px; }
+  .fc-back .fc-assoc { font-size: 0.9rem; opacity: 0.8; margin-bottom: 10px; font-style: italic; }
+  .fc-back .fc-sentence { font-size: 0.88rem; opacity: 0.85; text-align: center; line-height: 1.5; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 10px; margin-top: 8px; }
+  .fc-actions { display: flex; gap: 12px; margin-top: 20px; }
+
+  /* vocab grid */
+  .vocab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
+  .vocab-item { background: white; border-radius: 10px; padding: 14px; text-align: center; box-shadow: 0 2px 6px rgba(0,0,0,0.06); cursor: pointer; transition: transform .2s, box-shadow .2s; border: 2px solid transparent; }
+  .vocab-item:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+  .vocab-item.learned { border-color: var(--green); }
+  .vocab-item .vi-emoji { font-size: 2.2rem; }
+  .vocab-item .vi-word { font-size: 1rem; font-weight: 700; margin-top: 6px; }
+  .vocab-item .vi-article { color: var(--blue); font-size: 0.85rem; }
+  .vocab-item .vi-trans { font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
+  .vocab-tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .vtab { padding: 6px 14px; border-radius: 20px; border: 2px solid var(--border); background: white; cursor: pointer; font-size: 0.85rem; transition: all .2s; }
+  .vtab.active { background: var(--black); color: white; border-color: var(--black); }
+
+  /* EXERCISES */
+  .exercise-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+  .ex-card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); cursor: pointer; transition: all .2s; border-left: 4px solid var(--border); }
+  .ex-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+  .ex-card .ex-icon { font-size: 2rem; margin-bottom: 10px; }
+  .ex-card h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 4px; }
+  .ex-card p { font-size: 0.82rem; color: var(--muted); }
+  .ex-card .ex-badge { display: inline-block; font-size: 0.75rem; padding: 2px 8px; border-radius: 10px; margin-top: 8px; font-weight: 600; }
+  .ex-card.lesen { border-left-color: var(--blue); }
+  .ex-card.hoeren { border-left-color: var(--green); }
+  .ex-card.schreiben { border-left-color: var(--gold); }
+  .ex-card.sprechen { border-left-color: var(--red); }
+  .ex-card.grammatik { border-left-color: #9b59b6; }
+
+  /* EXERCISE MODAL */
+  .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; overflow-y: auto; }
+  .modal.open { display: flex; align-items: flex-start; justify-content: center; padding: 20px; }
+  .modal-box { background: white; border-radius: 16px; width: 100%; max-width: 700px; margin: auto; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+  .modal-header { padding: 20px 24px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
+  .modal-header h2 { font-size: 1.1rem; }
+  .modal-close { background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--muted); line-height: 1; }
+  .modal-body { padding: 24px; }
+  .modal-footer { padding: 16px 24px; background: #f8f9fa; border-top: 1px solid var(--border); display: flex; gap: 10px; justify-content: flex-end; }
+
+  /* EXERCISE TYPES */
+  .reading-text { background: #f8f9fa; border-radius: 10px; padding: 16px; font-size: 0.92rem; line-height: 1.7; margin-bottom: 16px; border-left: 3px solid var(--blue); }
+  .question-block { margin-bottom: 16px; }
+  .question-block p { font-weight: 600; margin-bottom: 8px; font-size: 0.95rem; }
+  .options { display: flex; flex-direction: column; gap: 6px; }
+  .option { padding: 10px 14px; border-radius: 8px; border: 2px solid var(--border); cursor: pointer; font-size: 0.9rem; transition: all .2s; }
+  .option:hover { border-color: var(--blue); background: #eaf2f8; }
+  .option.selected { border-color: var(--blue); background: #eaf2f8; }
+  .option.correct { border-color: var(--green); background: #d4edda; }
+  .option.wrong { border-color: var(--red); background: #fde8ea; }
+  .feedback { padding: 12px 16px; border-radius: 8px; margin-top: 12px; font-size: 0.9rem; font-weight: 600; display: none; }
+  .feedback.show { display: block; }
+  .feedback.ok { background: #d4edda; color: #155724; }
+  .feedback.fail { background: #fde8ea; color: #721c24; }
+
+  .fill-input { border: 2px solid var(--border); border-radius: 6px; padding: 6px 10px; font-size: 0.9rem; width: 100%; margin-top: 6px; transition: border .2s; }
+  .fill-input:focus { outline: none; border-color: var(--blue); }
+  .fill-input.correct { border-color: var(--green); background: #d4edda; }
+  .fill-input.wrong { border-color: var(--red); background: #fde8ea; }
+
+  .audio-script { background: #f0f7ff; border-radius: 10px; padding: 16px; font-size: 0.9rem; line-height: 1.7; margin-bottom: 16px; border-left: 3px solid var(--green); }
+  .audio-script .speaker { font-weight: 700; color: var(--green); }
+
+  .writing-prompt { background: #fff9f0; border-radius: 10px; padding: 16px; margin-bottom: 16px; border-left: 3px solid var(--gold); }
+  .writing-area { width: 100%; min-height: 150px; border: 2px solid var(--border); border-radius: 8px; padding: 12px; font-size: 0.9rem; font-family: inherit; resize: vertical; transition: border .2s; }
+  .writing-area:focus { outline: none; border-color: var(--gold); }
+  .writing-tips { background: #f8f9fa; border-radius: 8px; padding: 12px; font-size: 0.85rem; color: var(--muted); }
+  .writing-tips ul { padding-left: 18px; margin-top: 6px; }
+  .writing-tips li { margin-bottom: 4px; }
+  .word-count { font-size: 0.8rem; color: var(--muted); text-align: right; margin-top: 4px; }
+
+  .speaking-prompt { background: #fff0f0; border-radius: 10px; padding: 16px; margin-bottom: 16px; border-left: 3px solid var(--red); }
+  .speaking-tips { display: grid; gap: 8px; }
+  .speaking-tip { background: #f8f9fa; border-radius: 8px; padding: 10px 14px; font-size: 0.88rem; border-left: 3px solid var(--red); }
+
+  /* STATS */
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; margin-bottom: 20px; }
+  .stat-box { background: white; border-radius: 12px; padding: 16px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.07); }
+  .stat-box .stat-n { font-size: 2rem; font-weight: 700; color: var(--black); }
+  .stat-box .stat-l { font-size: 0.82rem; color: var(--muted); margin-top: 4px; }
+  .progress-bar { height: 10px; background: var(--border); border-radius: 5px; overflow: hidden; margin-top: 6px; }
+  .progress-fill { height: 100%; border-radius: 5px; background: linear-gradient(90deg, var(--blue), var(--green)); transition: width .5s; }
+
+  .section-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 16px; color: var(--black); display: flex; align-items: center; gap: 10px; }
+  .section-title span { font-size: 1.5rem; }
+
+  /* GRAMMAR FILL */
+  .grammar-sentence { font-size: 1.05rem; line-height: 2; margin-bottom: 8px; }
+  .grammar-blank { display: inline-block; border-bottom: 2px solid var(--black); min-width: 80px; text-align: center; position: relative; }
+  .grammar-blank input { border: none; border-bottom: 2px solid var(--black); background: transparent; font-size: 1rem; width: 100px; text-align: center; outline: none; font-family: inherit; }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    .nav-btn { padding: 12px 8px; font-size: 0.78rem; }
+    .nav-logo { padding: 12px 12px 12px 0; }
+    .fc-word { font-size: 1.5rem; }
+    .fc-emoji { font-size: 3.5rem; }
+  }
+
+  .tag { display: inline-block; font-size: 0.75rem; padding: 2px 8px; border-radius: 10px; font-weight: 600; }
+  .tag-a1 { background: #dbeafe; color: #1e40af; }
+  .tag-a2 { background: #d1fae5; color: #065f46; }
+  .tag-b1 { background: #fce7f3; color: #9d174d; }
+
+  .toast { position: fixed; bottom: 24px; right: 24px; background: var(--black); color: white; padding: 12px 20px; border-radius: 10px; font-size: 0.9rem; z-index: 999; transform: translateY(100px); opacity: 0; transition: all .3s; }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  /* TRAINER */
+  @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)} 40%{transform:translateX(8px)} 60%{transform:translateX(-5px)} 80%{transform:translateX(5px)} }
+  @keyframes pop { 0%{transform:scale(1)} 50%{transform:scale(1.06)} 100%{transform:scale(1)} }
+  .tr-opt { padding: 13px 16px; border-radius: 10px; border: 2px solid var(--border); cursor: pointer; font-size: 0.95rem; transition: all .15s; display:flex; align-items:center; gap:10px; }
+  .tr-opt:hover { border-color: var(--blue); background: #eaf2f8; }
+  .tr-opt.correct { border-color: var(--green) !important; background: #d4edda !important; animation: pop .3s; }
+  .tr-opt.wrong { border-color: var(--red) !important; background: #fde8ea !important; animation: shake .4s; }
+  .tr-opt.disabled { pointer-events: none; opacity: 0.6; }
+  .tr-opt.correct.disabled { opacity: 1; }
+  .tr-streak { display:inline-block; padding:2px 8px; border-radius:10px; font-size:0.75rem; font-weight:700; }
+  .btn-danger { background: var(--red); color: white; }
+  .btn-danger:hover { background: #c1121f; }
+  #trCard { transition: opacity .2s; }
+  #trCard.fading { opacity: 0; }
+  .known-pill { background: #d4edda; color: #155724; padding: 4px 10px; border-radius: 20px; font-size: 0.82rem; font-weight:600; }
+
+  /* MODAL VOCAB */
+  .word-modal-emoji { font-size: 5rem; text-align: center; margin-bottom: 12px; }
+  .word-modal-word { font-size: 2.2rem; font-weight: 700; text-align: center; }
+  .word-modal-article { color: var(--blue); font-size: 1.1rem; text-align: center; margin-bottom: 16px; }
+  .word-detail-row { display: flex; gap: 10px; margin-bottom: 10px; font-size: 0.92rem; }
+  .word-detail-row .label { font-weight: 700; color: var(--muted); min-width: 120px; }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo">🇩🇪 <span>TELC B1</span></div>
+  <button class="nav-btn active" onclick="showPage('home')">🏠 Главная</button>
+  <button class="nav-btn" onclick="showPage('program')">📍 Программа</button>
+  <button class="nav-btn" onclick="showPage('vocab')">📚 Слова</button>
+  <button class="nav-btn" onclick="showPage('exercises')">✏️ Упражнения</button>
+  <button class="nav-btn" onclick="showPage('trainer')">🧠 Тренажёр</button>
+  <div class="nav-progress">
+    <span class="xp-badge" id="xpBadge">⭐ 0 XP</span>
+  </div>
+</nav>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- ===== HOME ===== -->
+<div class="page active" id="page-home">
+  <div class="card" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: white; padding: 30px;">
+    <div style="display:flex; align-items:center; gap:20px; flex-wrap:wrap;">
+      <div style="font-size:3.5rem;">🎯</div>
+      <div>
+        <h1 style="font-size:1.6rem; margin-bottom:6px;">Подготовка к TELC B1</h1>
+        <p style="opacity:0.8; font-size:0.95rem;">Путь от A1 до B1 · Занятия 1–2 раза в неделю с репетитором</p>
+      </div>
+    </div>
+    <div style="margin-top:20px;">
+      <div style="display:flex; justify-content:space-between; font-size:0.85rem; opacity:0.8; margin-bottom:6px;">
+        <span>A1 — начало</span><span id="overallPct">0%</span><span>B1 — цель</span>
+      </div>
+      <div class="progress-bar" style="height:14px;">
+        <div class="progress-fill" id="overallBar" style="width:0%"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats-grid" id="homeStats">
+    <div class="stat-box"><div class="stat-n" id="sWordsLearned">0</div><div class="stat-l">Слов изучено</div></div>
+    <div class="stat-box"><div class="stat-n" id="sExDone">0</div><div class="stat-l">Упражнений</div></div>
+    <div class="stat-box"><div class="stat-n" id="sMilestones">0</div><div class="stat-l">Пройдено тем</div></div>
+    <div class="stat-box"><div class="stat-n" id="sXP">0</div><div class="stat-l">XP очков</div></div>
+  </div>
+
+  <div class="card">
+    <h2>📋 Структура экзамена TELC B1</h2>
+    <table style="width:100%; border-collapse:collapse; font-size:0.9rem;">
+      <tr style="background:#f8f9fa;">
+        <th style="padding:10px; text-align:left; border-bottom:2px solid var(--border);">Часть</th>
+        <th style="padding:10px; text-align:left; border-bottom:2px solid var(--border);">Название</th>
+        <th style="padding:10px; text-align:left; border-bottom:2px solid var(--border);">Время</th>
+        <th style="padding:10px; text-align:left; border-bottom:2px solid var(--border);">Баллы</th>
+      </tr>
+      <tr><td style="padding:9px 10px; border-bottom:1px solid var(--border);">📖</td><td style="padding:9px 10px; border-bottom:1px solid var(--border);">Lesen (Чтение)</td><td style="padding:9px 10px; border-bottom:1px solid var(--border);">45 мин</td><td style="padding:9px 10px; border-bottom:1px solid var(--border);">45</td></tr>
+      <tr style="background:#f8f9fa;"><td style="padding:9px 10px; border-bottom:1px solid var(--border);">🔧</td><td style="padding:9px 10px; border-bottom:1px solid var(--border);">Sprachbausteine (Грамматика)</td><td style="padding:9px 10px; border-bottom:1px solid var(--border);">15 мин</td><td style="padding:9px 10px; border-bottom:1px solid var(--border);">15</td></tr>
+      <tr><td style="padding:9px 10px; border-bottom:1px solid var(--border);">🎧</td><td style="padding:9px 10px; border-bottom:1px solid var(--border);">Hören (Аудирование)</td><td style="padding:9px 10px; border-bottom:1px solid var(--border);">~30 мин</td><td style="padding:9px 10px; border-bottom:1px solid var(--border);">45</td></tr>
+      <tr style="background:#f8f9fa;"><td style="padding:9px 10px; border-bottom:1px solid var(--border);">✍️</td><td style="padding:9px 10px; border-bottom:1px solid var(--border);">Schreiben (Письмо)</td><td style="padding:9px 10px; border-bottom:1px solid var(--border);">30 мин</td><td style="padding:9px 10px; border-bottom:1px solid var(--border);">30</td></tr>
+      <tr><td style="padding:9px 10px;">🗣️</td><td style="padding:9px 10px;">Sprechen (Говорение)</td><td style="padding:9px 10px;">~15 мин</td><td style="padding:9px 10px;">45</td></tr>
+    </table>
+    <p style="margin-top:12px; font-size:0.85rem; color:var(--muted);">Проходной балл: 60% по каждому разделу. Устная часть — отдельно.</p>
+  </div>
+
+  <div class="card">
+    <h2>🚀 Быстрый старт</h2>
+    <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap:10px;">
+      <button class="btn btn-primary" style="padding:14px; font-size:0.95rem;" onclick="showPage('vocab'); setVocabMode('flash')">🃏 Учить слова</button>
+      <button class="btn btn-success" style="padding:14px; font-size:0.95rem;" onclick="showPage('exercises')">✏️ Упражнения</button>
+      <button class="btn btn-outline" style="padding:14px; font-size:0.95rem;" onclick="showPage('program')">📍 Моя программа</button>
+    </div>
+  </div>
+
+  <!-- CONTENT PREVIEW -->
+  <div class="card">
+    <h2>📦 Весь контент приложения <span style="font-size:0.8rem;color:var(--muted);font-weight:400;">v2.0</span></h2>
+    <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:12px; margin-top:4px;">
+
+      <div style="background:#eaf2fb; border-radius:10px; padding:14px;">
+        <div style="font-weight:700; margin-bottom:8px;">📚 Словарь — <span id="homeVocabCount">158</span> слов</div>
+        <div style="font-size:0.85rem; display:flex; gap:8px; flex-wrap:wrap;">
+          <span onclick="showPage('vocab');document.getElementById('vocabLevel').value='A1';filterVocab();" style="cursor:pointer;background:#dbeafe;color:#1e40af;padding:4px 10px;border-radius:20px;font-weight:600;">A1 — 40 слов</span>
+          <span onclick="showPage('vocab');document.getElementById('vocabLevel').value='A2';filterVocab();" style="cursor:pointer;background:#d1fae5;color:#065f46;padding:4px 10px;border-radius:20px;font-weight:600;">A2 — 62 слова</span>
+          <span onclick="showPage('vocab');document.getElementById('vocabLevel').value='B1';filterVocab();" style="cursor:pointer;background:#fce7f3;color:#9d174d;padding:4px 10px;border-radius:20px;font-weight:600;">B1 — 56 слов</span>
+        </div>
+        <div style="font-size:0.8rem;color:var(--muted);margin-top:8px;">Темы: Familie, Essen, Wohnen, Arbeit, Gesundheit, Reisen, Umwelt, Medien и ещё 14 тем</div>
+        <button class="btn btn-primary" style="margin-top:10px;width:100%;" onclick="showPage('vocab');setVocabMode('grid')">⊞ Открыть все слова</button>
+      </div>
+
+      <div style="background:#f0fdf4; border-radius:10px; padding:14px;">
+        <div style="font-weight:700; margin-bottom:8px;">✏️ Упражнения — <span id="homeExCount">35</span> заданий</div>
+        <div style="font-size:0.85rem; display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px;">
+          <span onclick="showPage('exercises');filterEx('lesen',document.querySelector('#exTabs .vtab:nth-child(2)'))" style="cursor:pointer;background:#dbeafe;padding:3px 8px;border-radius:10px;">📖 Чтение ×7</span>
+          <span onclick="showPage('exercises');filterEx('hoeren',document.querySelector('#exTabs .vtab:nth-child(3)'))" style="cursor:pointer;background:#d1fae5;padding:3px 8px;border-radius:10px;">🎧 Аудирование ×7</span>
+          <span onclick="showPage('exercises');filterEx('schreiben',document.querySelector('#exTabs .vtab:nth-child(4)'))" style="cursor:pointer;background:#fef3c7;padding:3px 8px;border-radius:10px;">✍️ Письмо ×5</span>
+          <span onclick="showPage('exercises');filterEx('sprechen',document.querySelector('#exTabs .vtab:nth-child(5)'))" style="cursor:pointer;background:#fde8ea;padding:3px 8px;border-radius:10px;">🗣️ Говорение ×6</span>
+          <span onclick="showPage('exercises');filterEx('grammatik',document.querySelector('#exTabs .vtab:nth-child(6)'))" style="cursor:pointer;background:#f3e8ff;padding:3px 8px;border-radius:10px;">🔧 Грамматика ×10</span>
+        </div>
+        <button class="btn btn-success" style="width:100%;" onclick="showPage('exercises')">✏️ Открыть упражнения</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- WORD OF THE DAY -->
+  <div class="card" id="wotdCard">
+    <h2>🌟 Слово дня</h2>
+    <div id="wotdContent" style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+      <div style="font-size:3rem;" id="wotdEmoji">⏳</div>
+      <div>
+        <div style="font-size:1.4rem;font-weight:700;" id="wotdWord">Загрузка...</div>
+        <div style="color:var(--blue);font-size:0.9rem;" id="wotdArticle"></div>
+        <div style="color:var(--muted);font-size:0.9rem;margin-top:4px;" id="wotdTrans"></div>
+        <div style="font-size:0.85rem;margin-top:6px;font-style:italic;" id="wotdSentence"></div>
+      </div>
+    </div>
+    <button class="btn btn-outline" style="margin-top:12px;" onclick="loadWotd()">🔄 Другое слово</button>
+  </div>
+</div>
+
+<!-- ===== PROGRAM ===== -->
+<div class="page" id="page-program">
+  <div class="section-title"><span>📍</span> Программа A1 → B1</div>
+  <p style="color:var(--muted); margin-bottom:20px; font-size:0.9rem;">Нажми на этап чтобы раскрыть темы. Отмечай пройденные пункты ✓</p>
+
+  <div class="stages" id="stagesContainer"></div>
+</div>
+
+<!-- ===== VOCAB ===== -->
+<div class="page" id="page-vocab">
+  <div class="section-title"><span>📚</span> Словарный запас</div>
+
+  <div class="vocab-controls">
+    <input type="text" id="vocabSearch" placeholder="🔍 Поиск слова..." oninput="filterVocab()">
+    <select id="vocabLevel" onchange="filterVocab()">
+      <option value="all">Все уровни</option>
+      <option value="A1">A1</option>
+      <option value="A2">A2</option>
+      <option value="B1">B1</option>
+    </select>
+    <select id="vocabTheme" onchange="filterVocab()">
+      <option value="all">Все темы</option>
+    </select>
+    <button class="btn btn-primary" onclick="setVocabMode('flash')">🃏 Флэш-карты</button>
+    <button class="btn btn-outline" onclick="setVocabMode('grid')">⊞ Сетка</button>
+  </div>
+
+  <div class="vocab-tabs" id="vocabTabs"></div>
+
+  <!-- FLASHCARD MODE -->
+  <div id="vocabFlash">
+    <div class="flashcard-area">
+      <div class="flashcard-nav">
+        <button class="btn btn-outline" onclick="prevCard()">← Назад</button>
+        <span id="cardCounter">1 / 1</span>
+        <button class="btn btn-outline" onclick="nextCard()">Вперёд →</button>
+      </div>
+      <div class="flashcard-wrap" onclick="flipCard()">
+        <div class="flashcard" id="flashcard">
+          <div class="fc-front">
+            <div class="fc-emoji" id="fcEmoji">🏠</div>
+            <div class="fc-article" id="fcArticle"></div>
+            <div class="fc-word" id="fcWord">das Haus</div>
+            <div class="fc-type" id="fcType">существительное</div>
+            <div class="fc-hint">👆 Нажми чтобы перевернуть</div>
+          </div>
+          <div class="fc-back">
+            <div class="fc-translation" id="fcTrans">Дом</div>
+            <div class="fc-assoc" id="fcAssoc">💭 ассоциации</div>
+            <div class="fc-sentence" id="fcSentence">example sentence</div>
+          </div>
+        </div>
+      </div>
+      <div class="fc-actions">
+        <button class="btn btn-danger" onclick="markCard(false)">✗ Ещё раз</button>
+        <button class="btn btn-success" onclick="markCard(true)">✓ Знаю!</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- GRID MODE -->
+  <div id="vocabGrid" style="display:none;">
+    <div class="vocab-grid" id="vocabGridContainer"></div>
+  </div>
+</div>
+
+<!-- ===== EXERCISES ===== -->
+<div class="page" id="page-exercises">
+  <div class="section-title"><span>✏️</span> Упражнения</div>
+
+  <div style="margin-bottom: 20px;">
+    <div class="vocab-tabs" id="exTabs">
+      <div class="vtab active" onclick="filterEx('all', this)">Все</div>
+      <div class="vtab" onclick="filterEx('lesen', this)">📖 Чтение</div>
+      <div class="vtab" onclick="filterEx('hoeren', this)">🎧 Аудирование</div>
+      <div class="vtab" onclick="filterEx('schreiben', this)">✍️ Письмо</div>
+      <div class="vtab" onclick="filterEx('sprechen', this)">🗣️ Говорение</div>
+      <div class="vtab" onclick="filterEx('grammatik', this)">🔧 Грамматика</div>
+    </div>
+  </div>
+
+  <div class="exercise-grid" id="exerciseGrid"></div>
+</div>
+
+<!-- ===== TRAINER PAGE ===== -->
+<div class="page" id="page-trainer">
+
+  <!-- SETUP SCREEN -->
+  <div id="trainerSetup">
+    <div class="section-title"><span>🧠</span> Тренажёр слов</div>
+
+    <div class="card" style="border-left: 4px solid var(--gold);">
+      <h2>Как работает тренажёр</h2>
+      <div style="font-size:0.9rem; color:var(--muted); line-height:1.8;">
+        🔴 <strong>Не знаю</strong> — слово возвращается снова и снова<br>
+        🟡 <strong>Затрудняюсь</strong> — слово появится через 5 карточек<br>
+        🟢 <strong>Знаю!</strong> — слово нужно угадать 3 раза подряд, затем уходит в «Изученные»<br>
+        🔄 Тренажёр чередует 4 типа упражнений: карточка, 4 варианта (DE→RU), 4 варианта (RU→DE), предложение
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:14px; margin-bottom:20px;">
+      <div class="stat-box"><div class="stat-n" id="trSetupTotal">0</div><div class="stat-l">Всего слов</div></div>
+      <div class="stat-box" style="border-left:3px solid var(--green);"><div class="stat-n" id="trSetupLearned">0</div><div class="stat-l">Уже изучено</div></div>
+      <div class="stat-box" style="border-left:3px solid var(--red);"><div class="stat-n" id="trSetupRemaining">0</div><div class="stat-l">Осталось выучить</div></div>
+    </div>
+
+    <div class="card">
+      <h2>⚙️ Настройки сессии</h2>
+      <div style="display:grid; gap:14px;">
+        <div>
+          <label style="font-weight:600; font-size:0.9rem;">Уровень слов:</label>
+          <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;" id="trLevelFilter">
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;background:#f0f2f5;padding:6px 14px;border-radius:20px;font-size:0.88rem;"><input type="checkbox" value="A1" checked onchange="updateTrainerSetup()"> A1</label>
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;background:#f0f2f5;padding:6px 14px;border-radius:20px;font-size:0.88rem;"><input type="checkbox" value="A2" checked onchange="updateTrainerSetup()"> A2</label>
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;background:#f0f2f5;padding:6px 14px;border-radius:20px;font-size:0.88rem;"><input type="checkbox" value="B1" onchange="updateTrainerSetup()"> B1</label>
+          </div>
+        </div>
+        <div>
+          <label style="font-weight:600; font-size:0.9rem;">Режим:</label>
+          <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;">
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;background:#f0f2f5;padding:6px 14px;border-radius:20px;font-size:0.88rem;"><input type="radio" name="trMode" value="smart" checked> 🎯 Умный (упор на незнакомые)</label>
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;background:#f0f2f5;padding:6px 14px;border-radius:20px;font-size:0.88rem;"><input type="radio" name="trMode" value="unknown"> 🔴 Только незнакомые</label>
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;background:#f0f2f5;padding:6px 14px;border-radius:20px;font-size:0.88rem;"><input type="radio" name="trMode" value="all"> 📚 Все слова</label>
+          </div>
+        </div>
+        <div>
+          <label style="font-weight:600; font-size:0.9rem;">Слов в сессии:</label>
+          <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;">
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;background:#f0f2f5;padding:6px 14px;border-radius:20px;font-size:0.88rem;"><input type="radio" name="trCount" value="10" checked> 10</label>
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;background:#f0f2f5;padding:6px 14px;border-radius:20px;font-size:0.88rem;"><input type="radio" name="trCount" value="20"> 20</label>
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;background:#f0f2f5;padding:6px 14px;border-radius:20px;font-size:0.88rem;"><input type="radio" name="trCount" value="all"> Все</label>
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-primary" style="margin-top:16px; width:100%; padding:14px; font-size:1rem;" onclick="startTrainer()">🚀 Начать тренировку</button>
+    </div>
+
+    <!-- LEARNED WORDS -->
+    <div class="card">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+        <h2 style="margin:0;">✅ Изученные слова (<span id="trLearnedCount">0</span>)</h2>
+        <button class="btn btn-outline" style="font-size:0.8rem;" onclick="toggleLearnedList()">Показать / скрыть</button>
+      </div>
+      <div id="trLearnedList" style="display:none;">
+        <div class="vocab-grid" id="trLearnedGrid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SESSION SCREEN -->
+  <div id="trainerSession" style="display:none;">
+
+    <!-- Progress bar -->
+    <div style="background:white; border-radius:12px; padding:16px 20px; margin-bottom:16px; box-shadow:0 2px 8px rgba(0,0,0,0.07);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:8px;">
+        <div style="display:flex; gap:12px; font-size:0.88rem;">
+          <span style="color:var(--red);">🔴 <strong id="trCountUnknown">0</strong> не знаю</span>
+          <span style="color:var(--gold);">🟡 <strong id="trCountLearning">0</strong> учу</span>
+          <span style="color:var(--green);">🟢 <strong id="trCountKnown">0</strong> знаю</span>
+        </div>
+        <button class="btn btn-outline" style="font-size:0.8rem; padding:4px 12px;" onclick="endSession()">Завершить</button>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="trSessionBar" style="width:0%"></div>
+      </div>
+      <div style="display:flex; justify-content:space-between; font-size:0.78rem; color:var(--muted); margin-top:4px;">
+        <span id="trSessionLabel">Карточка 1 из 10</span>
+        <span id="trSessionPct">0%</span>
+      </div>
+    </div>
+
+    <!-- Exercise card -->
+    <div id="trCard" style="background:white; border-radius:16px; box-shadow:0 4px 20px rgba(0,0,0,0.1); overflow:hidden; margin-bottom:16px;">
+
+      <!-- Type indicator -->
+      <div id="trTypeBar" style="background:var(--black); color:white; padding:8px 20px; font-size:0.8rem; display:flex; align-items:center; gap:8px;">
+        <span id="trTypeName">Карточка</span>
+        <span id="trWordLevel" style="background:rgba(255,255,255,0.2); padding:2px 8px; border-radius:10px; font-size:0.75rem;"></span>
+        <span id="trWordTheme" style="background:rgba(255,255,255,0.15); padding:2px 8px; border-radius:10px; font-size:0.75rem; opacity:0.8;"></span>
+        <span style="margin-left:auto; font-size:0.75rem; opacity:0.7;" id="trStreakBadge"></span>
+      </div>
+
+      <!-- EXERCISE TYPE: flashcard -->
+      <div id="trExFlashcard" style="padding:24px; text-align:center; display:none;">
+        <div id="trFlashEmoji" style="font-size:4rem; margin-bottom:8px;">🏠</div>
+        <div id="trFlashArticle" style="color:var(--blue); font-size:1rem; font-weight:600; margin-bottom:4px;"></div>
+        <div id="trFlashWord" style="font-size:2rem; font-weight:800; color:var(--black); margin-bottom:4px;"></div>
+        <div id="trFlashAssoc" style="font-size:0.88rem; color:var(--muted); font-style:italic; margin-bottom:16px;"></div>
+        <div id="trFlashAnswer" style="display:none; background:#f0f7ff; border-radius:10px; padding:16px; margin-top:8px; text-align:left; animation: fadeIn .3s;">
+          <div style="font-size:1.3rem; font-weight:700; margin-bottom:8px;" id="trFlashTrans"></div>
+          <div style="font-size:0.88rem; color:var(--muted); font-style:italic;" id="trFlashSentence"></div>
+        </div>
+        <button id="trFlashRevealBtn" class="btn btn-outline" style="margin-top:12px;" onclick="revealFlash()">👁️ Показать перевод</button>
+      </div>
+
+      <!-- EXERCISE TYPE: multiple choice DE→RU -->
+      <div id="trExMCDR" style="padding:24px; display:none;">
+        <div style="text-align:center; margin-bottom:20px;">
+          <div id="trMCDREmoji" style="font-size:3.5rem; margin-bottom:8px;">🏠</div>
+          <div id="trMCDRArticle" style="color:var(--blue); font-weight:600; margin-bottom:4px;"></div>
+          <div id="trMCDRWord" style="font-size:2rem; font-weight:800; color:var(--black);"></div>
+          <div style="font-size:0.85rem; color:var(--muted); margin-top:6px;">Выберите правильный перевод:</div>
+        </div>
+        <div id="trMCDROptions" style="display:grid; gap:10px;"></div>
+      </div>
+
+      <!-- EXERCISE TYPE: multiple choice RU→DE -->
+      <div id="trExMCRD" style="padding:24px; display:none;">
+        <div style="text-align:center; margin-bottom:20px;">
+          <div style="font-size:0.85rem; color:var(--muted); margin-bottom:6px;">Как это по-немецки?</div>
+          <div id="trMCRDTrans" style="font-size:1.6rem; font-weight:800; color:var(--black);"></div>
+          <div style="font-size:0.85rem; color:var(--muted); margin-top:6px;">Выберите правильное слово:</div>
+        </div>
+        <div id="trMCRDOptions" style="display:grid; gap:10px;"></div>
+      </div>
+
+      <!-- EXERCISE TYPE: sentence fill -->
+      <div id="trExSentence" style="padding:24px; display:none;">
+        <div style="font-size:0.85rem; color:var(--muted); margin-bottom:12px; text-align:center;">Вспомните слово по предложению:</div>
+        <div id="trSentenceText" style="font-size:1.15rem; line-height:1.9; margin-bottom:16px; background:#f8f9fa; padding:14px; border-radius:10px; border-left:3px solid var(--blue);"></div>
+        <div id="trSentenceAnswer" style="display:none; animation: fadeIn .3s;">
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px; flex-wrap:wrap;">
+            <div id="trSentEmoji" style="font-size:2.5rem;"></div>
+            <div>
+              <div id="trSentArticle" style="color:var(--blue); font-size:0.9rem; font-weight:600;"></div>
+              <div id="trSentWord" style="font-size:1.5rem; font-weight:800;"></div>
+              <div id="trSentTrans" style="color:var(--muted); font-size:0.9rem;"></div>
+            </div>
+          </div>
+        </div>
+        <button id="trSentRevealBtn" class="btn btn-outline" style="width:100%;" onclick="revealSentence()">👁️ Показать ответ</button>
+      </div>
+
+    </div>
+
+    <!-- ACTION BUTTONS (shown after reveal) -->
+    <div id="trActionBtns" style="display:none; gap:10px; display:flex; flex-direction:column; display:none;">
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;">
+        <button class="btn btn-danger" style="padding:16px 8px; font-size:0.9rem; border-radius:12px;" onclick="rateWord(0)">✗<br><small>Не знаю</small></button>
+        <button class="btn btn-gold" style="padding:16px 8px; font-size:0.9rem; border-radius:12px;" onclick="rateWord(1)">〜<br><small>Затрудняюсь</small></button>
+        <button class="btn btn-success" style="padding:16px 8px; font-size:0.9rem; border-radius:12px;" onclick="rateWord(2)">✓<br><small>Знаю!</small></button>
+      </div>
+    </div>
+
+    <!-- MC action buttons (shown immediately after choice) -->
+    <div id="trMCNext" style="display:none; margin-top:10px;">
+      <button class="btn btn-primary" style="width:100%; padding:14px;" onclick="trNextCard()">Следующее слово →</button>
+    </div>
+
+  </div>
+
+  <!-- RESULTS SCREEN -->
+  <div id="trainerResults" style="display:none;">
+    <div class="card" style="text-align:center; padding:30px;">
+      <div style="font-size:3rem; margin-bottom:12px;" id="trResultEmoji">🎉</div>
+      <h2 style="font-size:1.5rem; margin-bottom:8px;">Сессия завершена!</h2>
+      <p style="color:var(--muted);" id="trResultSub"></p>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:16px;">
+      <div class="stat-box" style="border-left:3px solid var(--green);"><div class="stat-n" id="trResKnown">0</div><div class="stat-l">Правильно</div></div>
+      <div class="stat-box" style="border-left:3px solid var(--red);"><div class="stat-n" id="trResUnknown">0</div><div class="stat-l">Не знал</div></div>
+      <div class="stat-box" style="border-left:3px solid var(--gold);"><div class="stat-n" id="trResNewLearned">0</div><div class="stat-l">Выучено сейчас</div></div>
+    </div>
+
+    <!-- Words to review -->
+    <div class="card" id="trResultReviewCard" style="display:none;">
+      <h2>🔴 Слова для повторения</h2>
+      <div id="trResultReviewList" style="display:grid; gap:8px; margin-top:8px;"></div>
+    </div>
+
+    <!-- Newly learned words -->
+    <div class="card" id="trResultLearnedCard" style="display:none;">
+      <h2>🎉 Новые изученные слова</h2>
+      <div id="trResultLearnedList" style="display:flex; flex-wrap:wrap; gap:8px; margin-top:8px;"></div>
+    </div>
+
+    <div style="display:flex; gap:10px; margin-top:16px;">
+      <button class="btn btn-primary" style="flex:1; padding:14px;" onclick="startTrainer()">🔄 Ещё раз</button>
+      <button class="btn btn-outline" style="flex:1; padding:14px;" onclick="backToSetup()">← К настройкам</button>
+    </div>
+  </div>
+</div>
+
+<!-- EXERCISE MODAL -->
+<div class="modal" id="exModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h2 id="modalTitle">Упражнение</h2>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-footer" id="modalFooter"></div>
+  </div>
+</div>
+
+<!-- WORD DETAIL MODAL -->
+<div class="modal" id="wordModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h2>Карточка слова</h2>
+      <button class="modal-close" onclick="closeWordModal()">×</button>
+    </div>
+    <div class="modal-body" id="wordModalBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-success" onclick="markWordLearned()">✓ Знаю это слово</button>
+      <button class="btn btn-outline" onclick="closeWordModal()">Закрыть</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// DATA
+// ============================================================
+
+const STAGES = [
+  {
+    id: 'a1', label: 'A1', title: 'Начало: уровень A1', cls: 'stage-a1',
+    desc: '~3 месяца · Базовый немецкий',
+    milestones: [
+      'Алфавит, произношение умлаутов (ä, ö, ü), ß',
+      'Артикли: der / die / das и их падежи (Nominativ)',
+      'Личные местоимения: ich, du, er, sie, es, wir, ihr, sie/Sie',
+      'Глагол sein и haben в настоящем времени',
+      'Счёт 1–100, даты, дни недели, месяцы',
+      'Базовое приветствие и прощание (Hallo, Tschüss, Guten Morgen)',
+      'Семья: Mutter, Vater, Bruder, Schwester',
+      'Еда и напитки: Brot, Wasser, Kaffee, Apfel',
+      'Цвета и числа',
+      'Вопросительные слова: Wer? Was? Wo? Wie?',
+      '200 базовых слов (A1 уровень)',
+      'Простые предложения: Ich heiße... Ich wohne in...',
+    ]
+  },
+  {
+    id: 'a2', label: 'A2', title: 'Развитие: уровень A2', cls: 'stage-a2',
+    desc: '~5 месяцев · Повседневное общение',
+    milestones: [
+      'Падежи: Akkusativ и Dativ',
+      'Прошедшее время: Perfekt (haben/sein + Partizip II)',
+      'Модальные глаголы: können, müssen, wollen, dürfen, sollen',
+      'Предлоги места и времени (in, an, auf, neben, um, seit...)',
+      'Тема "Работа": Beruf, Büro, Kollege, Firma',
+      'Тема "Жильё": Wohnung, Zimmer, Miete, Nachbar',
+      'Тема "Транспорт": Zug, Bus, Fahrrad, Fahrkarte',
+      'Тема "Здоровье": Arzt, Schmerzen, Krankenhaus, Termin',
+      'Тема "Покупки": kaufen, kosten, Supermarkt, Rechnung',
+      'Сравнения: groß → größer → am größten',
+      'Отрицание: nicht / kein',
+      '500 слов (A1+A2)',
+    ]
+  },
+  {
+    id: 'b1', label: 'B1', title: 'Цель: уровень B1', cls: 'stage-b1',
+    desc: '~6 месяцев · Подготовка к TELC',
+    milestones: [
+      'Придаточные предложения: weil, dass, wenn, obwohl, damit',
+      'Прошедшее время Präteritum (sein, haben, модальные)',
+      'Пассивный залог: Passiv (wird gemacht)',
+      'Конъюнктив II: würde + Infinitiv, hätte, wäre',
+      'Возвратные глаголы: sich freuen, sich vorstellen',
+      'Тема "Путешествия": Urlaub, Hotel, Flug, Visum',
+      'Тема "Окружающая среда": Umwelt, Müll, Energie',
+      'Тема "Медиа и технологии": Internet, Handy, Nachrichten',
+      'Тема "Образование": Schule, Studium, Prüfung, Kurs',
+      'Письмо: официальное письмо / имейл (формат TELC)',
+      'Аудирование: понимать радио, разговоры, объявления',
+      'Говорение: описание фото, дискуссия, совместное планирование',
+      'Практика TELC: 5+ пробных тестов',
+      '1200 слов (A1+A2+B1)',
+    ]
+  }
+];
+
+const VOCAB = [
+  // ── A1 — Familie ──
+  { id:1,  word:'die Mutter',    article:'die', base:'Mutter',    emoji:'👩',  level:'A1', theme:'Familie',    trans:'Мать, мама',              assoc:'🤱 mother — "мать" в большинстве европейских языков похоже', sentence:'Meine Mutter kocht sehr gut.' },
+  { id:2,  word:'der Vater',     article:'der', base:'Vater',     emoji:'👨',  level:'A1', theme:'Familie',    trans:'Отец, папа',               assoc:'🔨 father → Vater, одно происхождение',                      sentence:'Mein Vater arbeitet als Ingenieur.' },
+  { id:3,  word:'der Bruder',    article:'der', base:'Bruder',    emoji:'👦',  level:'A1', theme:'Familie',    trans:'Брат',                     assoc:'💪 brother → Bruder, почти одинаково!',                      sentence:'Mein Bruder ist 12 Jahre alt.' },
+  { id:4,  word:'die Schwester', article:'die', base:'Schwester', emoji:'👧',  level:'A1', theme:'Familie',    trans:'Сестра',                   assoc:'🌸 sister → Schwester; Krankenschwester = медсестра',         sentence:'Meine Schwester studiert Medizin.' },
+  { id:5,  word:'das Kind',      article:'das', base:'Kind',      emoji:'🧒',  level:'A1', theme:'Familie',    trans:'Ребёнок',                  assoc:'😊 kind (англ.) = добрый — дети добрые',                     sentence:'Das Kind spielt im Garten.' },
+  { id:6,  word:'der Mann',      article:'der', base:'Mann',      emoji:'🧔',  level:'A1', theme:'Familie',    trans:'Мужчина, муж',             assoc:'👔 man → Mann — одно слово!',                               sentence:'Ihr Mann heißt Thomas.' },
+  { id:7,  word:'die Frau',      article:'die', base:'Frau',      emoji:'👩',  level:'A1', theme:'Familie',    trans:'Женщина, жена, госпожа',   assoc:'💍 Frau = госпожа (как обращение) и жена',                  sentence:'Frau Müller ist meine Lehrerin.' },
+  { id:8,  word:'die Großmutter',article:'die', base:'Großmutter',emoji:'👵',  level:'A1', theme:'Familie',    trans:'Бабушка',                  assoc:'👵 groß (большой) + Mutter (мать) = большая мать',          sentence:'Meine Großmutter wohnt in Hamburg.' },
+  { id:9,  word:'der Großvater', article:'der', base:'Großvater', emoji:'👴',  level:'A1', theme:'Familie',    trans:'Дедушка',                  assoc:'👴 groß + Vater — по аналогии с Großmutter',                sentence:'Mein Großvater ist 75 Jahre alt.' },
+
+  // ── A1 — Essen & Trinken ──
+  { id:10, word:'das Brot',      article:'das', base:'Brot',      emoji:'🍞',  level:'A1', theme:'Essen',     trans:'Хлеб',                     assoc:'🥖 немцы — чемпионы мира по сортам хлеба (300+)',           sentence:'Ich esse morgens Brot mit Butter.' },
+  { id:11, word:'der Apfel',     article:'der', base:'Apfel',     emoji:'🍎',  level:'A1', theme:'Essen',     trans:'Яблоко',                   assoc:'🍎 Apple Inc — логотип откусанного Apfel',                   sentence:'Ein Apfel am Tag hält den Arzt fern.' },
+  { id:12, word:'das Wasser',    article:'das', base:'Wasser',    emoji:'💧',  level:'A1', theme:'Essen',     trans:'Вода',                     assoc:'💦 Wasser → "вассер" — слышно похожесть с водой',           sentence:'Ich trinke jeden Tag viel Wasser.' },
+  { id:13, word:'der Kaffee',    article:'der', base:'Kaffee',    emoji:'☕',  level:'A1', theme:'Essen',     trans:'Кофе',                     assoc:'☕ coffee / café / кофе / Kaffee — везде похоже!',           sentence:'Jeden Morgen trinke ich einen Kaffee.' },
+  { id:14, word:'die Milch',     article:'die', base:'Milch',     emoji:'🥛',  level:'A1', theme:'Essen',     trans:'Молоко',                   assoc:'🐄 milk → Milch — одно происхождение',                      sentence:'Kinder trinken gerne Milch.' },
+  { id:15, word:'das Fleisch',   article:'das', base:'Fleisch',   emoji:'🥩',  level:'A1', theme:'Essen',     trans:'Мясо',                     assoc:'🥩 flesh (плоть по-английски) → Fleisch',                   sentence:'Er isst kein Fleisch, er ist Vegetarier.' },
+  { id:16, word:'die Suppe',     article:'die', base:'Suppe',     emoji:'🍲',  level:'A1', theme:'Essen',     trans:'Суп',                      assoc:'🍵 soup → Suppe — одинаково почти!',                        sentence:'Die Suppe schmeckt sehr gut.' },
+  { id:17, word:'das Ei',        article:'das', base:'Ei',        emoji:'🥚',  level:'A1', theme:'Essen',     trans:'Яйцо',                     assoc:'🥚 egg → Ei (коротко и ясно)',                              sentence:'Zum Frühstück esse ich zwei Eier.' },
+
+  // ── A1 — Wohnen ──
+  { id:18, word:'das Haus',      article:'das', base:'Haus',      emoji:'🏠',  level:'A1', theme:'Wohnen',    trans:'Дом',                      assoc:'🏠 house → Haus — одно происхождение!',                     sentence:'Wir wohnen in einem großen Haus.' },
+  { id:19, word:'die Wohnung',   article:'die', base:'Wohnung',   emoji:'🏢',  level:'A1', theme:'Wohnen',    trans:'Квартира',                 assoc:'🏠 wohnen (жить) → Wohnung = место где живёшь',             sentence:'Die Wohnung hat drei Zimmer.' },
+  { id:20, word:'das Zimmer',    article:'das', base:'Zimmer',    emoji:'🛋️', level:'A1', theme:'Wohnen',    trans:'Комната',                  assoc:'🪟 Zimmer → номер в отеле по-немецки тоже Zimmer',          sentence:'Mein Zimmer ist sehr gemütlich.' },
+  { id:21, word:'die Küche',     article:'die', base:'Küche',     emoji:'🍳',  level:'A1', theme:'Wohnen',    trans:'Кухня',                    assoc:'👨‍🍳 Koch (повар) и Küche (кухня) — один корень',       sentence:'Die Küche ist sehr modern.' },
+  { id:22, word:'das Bett',      article:'das', base:'Bett',      emoji:'🛏️', level:'A1', theme:'Wohnen',    trans:'Кровать',                  assoc:'😴 bed → Bett — почти одинаково!',                          sentence:'Ich gehe früh ins Bett.' },
+  { id:23, word:'das Bad',       article:'das', base:'Bad',       emoji:'🛁',  level:'A1', theme:'Wohnen',    trans:'Ванная, ванна',            assoc:'🛁 bad → Bad; в немецком ванная = Bad',                     sentence:'Das Bad hat eine Badewanne und eine Dusche.' },
+  { id:24, word:'die Tür',       article:'die', base:'Tür',       emoji:'🚪',  level:'A1', theme:'Wohnen',    trans:'Дверь',                    assoc:'🚪 door → Tür — похожи по звуку',                           sentence:'Bitte mach die Tür zu!' },
+
+  // ── A1 — Tiere ──
+  { id:25, word:'der Hund',      article:'der', base:'Hund',      emoji:'🐕',  level:'A1', theme:'Tiere',     trans:'Собака',                   assoc:'🐶 hound (охотничья собака) = Hund',                        sentence:'Der Hund heißt Bello und ist sehr lieb.' },
+  { id:26, word:'die Katze',     article:'die', base:'Katze',     emoji:'🐱',  level:'A1', theme:'Tiere',     trans:'Кошка',                    assoc:'🐱 cat → Katze, почти одинаково!',                          sentence:'Die Katze schläft auf dem Sofa.' },
+  { id:27, word:'der Vogel',     article:'der', base:'Vogel',     emoji:'🐦',  level:'A1', theme:'Tiere',     trans:'Птица',                    assoc:'🦅 Vogel — известная немецкая фамилия',                     sentence:'Der Vogel singt schön am Morgen.' },
+  { id:28, word:'das Pferd',     article:'das', base:'Pferd',     emoji:'🐴',  level:'A1', theme:'Tiere',     trans:'Лошадь',                   assoc:'🐴 Pferd → нем. furt (брод) — лошадь переходила реки',      sentence:'Das Pferd läuft sehr schnell.' },
+
+  // ── A1 — Verben ──
+  { id:29, word:'essen',         article:'',    base:'essen',     emoji:'🍽️', level:'A1', theme:'Verben A1', trans:'Есть, кушать',             assoc:'🍴 eat → essen, похожи!',                                   sentence:'Was möchten Sie essen?' },
+  { id:30, word:'trinken',       article:'',    base:'trinken',   emoji:'🥤',  level:'A1', theme:'Verben A1', trans:'Пить',                     assoc:'🍺 drink → trinken — схожие',                               sentence:'Ich möchte Wasser trinken.' },
+  { id:31, word:'gehen',         article:'',    base:'gehen',     emoji:'🚶',  level:'A1', theme:'Verben A1', trans:'Идти, ходить',             assoc:'🚶 go → gehen — похоже!',                                   sentence:'Ich gehe jeden Tag spazieren.' },
+  { id:32, word:'kommen',        article:'',    base:'kommen',    emoji:'🏃',  level:'A1', theme:'Verben A1', trans:'Приходить, приезжать',     assoc:'🏃 come → kommen!',                                         sentence:'Woher kommen Sie?' },
+  { id:33, word:'wohnen',        article:'',    base:'wohnen',    emoji:'🏠',  level:'A1', theme:'Verben A1', trans:'Жить, проживать',          assoc:'🏠 wohnen → Wohnung (квартира)',                            sentence:'Ich wohne in München.' },
+  { id:34, word:'arbeiten',      article:'',    base:'arbeiten',  emoji:'💼',  level:'A1', theme:'Verben A1', trans:'Работать',                 assoc:'⚒️ Arbeit = работа — "арбайт" знакомо из истории',         sentence:'Mein Vater arbeitet bei BMW.' },
+  { id:35, word:'sprechen',      article:'',    base:'sprechen',  emoji:'🗣️', level:'A1', theme:'Verben A1', trans:'Говорить',                 assoc:'🗣️ speak → sprechen',                                      sentence:'Ich spreche ein bisschen Deutsch.' },
+  { id:36, word:'lernen',        article:'',    base:'lernen',    emoji:'📖',  level:'A1', theme:'Verben A1', trans:'Учить, учиться',           assoc:'📚 learn → lernen!',                                        sentence:'Ich lerne jeden Tag neue Wörter.' },
+  { id:37, word:'schreiben',     article:'',    base:'schreiben', emoji:'✍️', level:'A1', theme:'Verben A1', trans:'Писать',                   assoc:'✍️ script / write → schreiben',                             sentence:'Ich schreibe einen Brief.' },
+  { id:38, word:'lesen',         article:'',    base:'lesen',     emoji:'📚',  level:'A1', theme:'Verben A1', trans:'Читать',                   assoc:'📖 les- → lecture (лекция) — тот же корень',                sentence:'Ich lese jeden Abend ein Buch.' },
+  { id:39, word:'kaufen',        article:'',    base:'kaufen',    emoji:'🛍️', level:'A1', theme:'Verben A1', trans:'Покупать',                 assoc:'🛒 kaufen → "кауфен" — в магазинах слышишь часто',          sentence:'Ich kaufe ein neues Handy.' },
+  { id:40, word:'heißen',        article:'',    base:'heißen',    emoji:'🏷️', level:'A1', theme:'Verben A1', trans:'Называться, звать',        assoc:'🏷️ Wie heißen Sie? — первая фраза на уроке!',              sentence:'Ich heiße Anna. Wie heißen Sie?' },
+
+  // ── A2 — Arbeit & Beruf ──
+  { id:41, word:'der Beruf',     article:'der', base:'Beruf',     emoji:'💼',  level:'A2', theme:'Arbeit',    trans:'Профессия',                assoc:'💼 berufen = призвать, Beruf = призвание',                   sentence:'Was ist Ihr Beruf? Ich bin Lehrer.' },
+  { id:42, word:'das Büro',      article:'das', base:'Büro',      emoji:'🏢',  level:'A2', theme:'Arbeit',    trans:'Офис, бюро',               assoc:'🖊️ бюро — это слово пришло в русский через французский',    sentence:'Ich arbeite jeden Tag im Büro.' },
+  { id:43, word:'der Kollege',   article:'der', base:'Kollege',   emoji:'🤝',  level:'A2', theme:'Arbeit',    trans:'Коллега',                  assoc:'👥 коллега — то же слово в русском!',                        sentence:'Mein Kollege ist sehr hilfsbereit.' },
+  { id:44, word:'die Firma',     article:'die', base:'Firma',     emoji:'🏭',  level:'A2', theme:'Arbeit',    trans:'Фирма, компания',          assoc:'🏢 фирма — то же слово в русском!',                          sentence:'Die Firma hat 200 Mitarbeiter.' },
+  { id:45, word:'die Stelle',    article:'die', base:'Stelle',    emoji:'📋',  level:'A2', theme:'Arbeit',    trans:'Должность, вакансия',      assoc:'📋 Stelle = место, stellenweise = местами',                 sentence:'Ich suche eine neue Stelle als Programmiererin.' },
+  { id:46, word:'das Gehalt',    article:'das', base:'Gehalt',    emoji:'💰',  level:'A2', theme:'Arbeit',    trans:'Зарплата (оклад)',         assoc:'💰 Gehalt = содержание → то что содержит тебя',             sentence:'Mein Gehalt ist leider nicht sehr hoch.' },
+  { id:47, word:'die Ausbildung',article:'die', base:'Ausbildung',emoji:'🎓',  level:'A2', theme:'Arbeit',    trans:'Профессиональное обучение',assoc:'🎓 aus + bilden (формировать) = профподготовка',             sentence:'Er macht eine Ausbildung als Koch.' },
+  { id:48, word:'der Chef',      article:'der', base:'Chef',      emoji:'👔',  level:'A2', theme:'Arbeit',    trans:'Начальник, шеф',           assoc:'👔 chef — то же слово в русском и английском!',              sentence:'Mein Chef ist sehr streng, aber fair.' },
+  { id:49, word:'die Besprechung',article:'die',base:'Besprechung',emoji:'📊', level:'A2', theme:'Arbeit',    trans:'Совещание, встреча',       assoc:'📊 besprechen = обсуждать → Besprechung',                    sentence:'Wir haben um 10 Uhr eine Besprechung.' },
+  { id:50, word:'kündigen',      article:'',    base:'kündigen',  emoji:'📤',  level:'A2', theme:'Arbeit',    trans:'Увольняться, расторгать',  assoc:'📤 kündigen → "объявить" о расторжении',                    sentence:'Er hat gekündigt und sucht einen neuen Job.' },
+
+  // ── A2 — Gesundheit ──
+  { id:51, word:'der Arzt',      article:'der', base:'Arzt',      emoji:'👨‍⚕️',level:'A2', theme:'Gesundheit',trans:'Врач',                    assoc:'🩺 Arzt → "арцт"; die Ärztin = врач (жен.)',               sentence:'Ich gehe morgen zum Arzt.' },
+  { id:52, word:'das Krankenhaus',article:'das',base:'Krankenhaus',emoji:'🏥', level:'A2', theme:'Gesundheit',trans:'Больница',                 assoc:'🤒 krank (больной) + Haus (дом) = дом для больных',        sentence:'Er liegt im Krankenhaus.' },
+  { id:53, word:'die Schmerzen', article:'die', base:'Schmerzen', emoji:'🤕',  level:'A2', theme:'Gesundheit',trans:'Боль (мн.ч.)',             assoc:'😣 Schmerz = боль, Kopfschmerzen = головная боль',         sentence:'Ich habe Schmerzen im Rücken.' },
+  { id:54, word:'der Termin',    article:'der', base:'Termin',    emoji:'📅',  level:'A2', theme:'Gesundheit',trans:'Приём, запись, встреча',  assoc:'📅 терmin — то же слово в русском бизнесе',               sentence:'Ich habe einen Termin beim Zahnarzt.' },
+  { id:55, word:'das Fieber',    article:'das', base:'Fieber',    emoji:'🌡️', level:'A2', theme:'Gesundheit',trans:'Температура, жар',        assoc:'🌡️ fever → Fieber — похожи!',                             sentence:'Das Kind hat hohes Fieber.' },
+  { id:56, word:'die Erkältung', article:'die', base:'Erkältung', emoji:'🤧',  level:'A2', theme:'Gesundheit',trans:'Простуда',                assoc:'🤧 kalt (холодный) → Erkältung = заболел от холода',       sentence:'Ich habe eine Erkältung und bleibe zu Hause.' },
+  { id:57, word:'das Rezept',    article:'das', base:'Rezept',    emoji:'📝',  level:'A2', theme:'Gesundheit',trans:'Рецепт (мед.)',           assoc:'📝 recipe / рецепт — то же слово!',                        sentence:'Der Arzt hat mir ein Rezept ausgestellt.' },
+  { id:58, word:'die Tablette',  article:'die', base:'Tablette',  emoji:'💊',  level:'A2', theme:'Gesundheit',trans:'Таблетка',                assoc:'💊 tablet → Tablette — одинаково!',                        sentence:'Nehmen Sie dreimal täglich eine Tablette.' },
+  { id:59, word:'sich fühlen',   article:'',    base:'sich fühlen',emoji:'😊', level:'A2', theme:'Gesundheit',trans:'Чувствовать себя',        assoc:'😊 feel → fühlen — похожи!',                               sentence:'Wie fühlen Sie sich heute? — Nicht so gut.' },
+  { id:60, word:'gesund',        article:'',    base:'gesund',    emoji:'💪',  level:'A2', theme:'Gesundheit',trans:'Здоровый',                assoc:'💪 Gesundheit! — говорят когда чихаешь',                   sentence:'Ich lebe gesund: Sport und gutes Essen.' },
+
+  // ── A2 — Reisen & Verkehr ──
+  { id:61, word:'der Zug',       article:'der', base:'Zug',       emoji:'🚆',  level:'A2', theme:'Reisen',    trans:'Поезд',                    assoc:'🚆 tug (тянуть) → Zug; поезд тянет вагоны',               sentence:'Der Zug nach Berlin fährt um 9 Uhr ab.' },
+  { id:62, word:'die Fahrkarte', article:'die', base:'Fahrkarte', emoji:'🎫',  level:'A2', theme:'Reisen',    trans:'Билет (на транспорт)',      assoc:'🎫 fahren (ехать) + Karte (карточка)',                      sentence:'Ich kaufe eine Fahrkarte am Automaten.' },
+  { id:63, word:'der Flughafen', article:'der', base:'Flughafen', emoji:'✈️',  level:'A2', theme:'Reisen',    trans:'Аэропорт',                 assoc:'✈️ fliegen (летать) + Hafen (порт) = аэропорт!',           sentence:'Der Flughafen ist sehr modern.' },
+  { id:64, word:'das Hotel',     article:'das', base:'Hotel',     emoji:'🏨',  level:'A2', theme:'Reisen',    trans:'Отель',                    assoc:'🏨 отель — то же слово везде!',                             sentence:'Wir übernachten in einem Hotel.' },
+  { id:65, word:'der Bahnhof',   article:'der', base:'Bahnhof',   emoji:'🚉',  level:'A2', theme:'Reisen',    trans:'Железнодорожная станция',  assoc:'🚉 Bahn (путь/дорога) + Hof (двор) = станция',            sentence:'Ich treffe dich am Bahnhof.' },
+  { id:66, word:'abfahren',      article:'',    base:'abfahren',  emoji:'🚀',  level:'A2', theme:'Reisen',    trans:'Отправляться, уезжать',    assoc:'🚀 ab (прочь) + fahren (ехать) = отправляться',           sentence:'Der Bus fährt um 14:30 ab.' },
+  { id:67, word:'ankommen',      article:'',    base:'ankommen',  emoji:'🏁',  level:'A2', theme:'Reisen',    trans:'Прибывать, приезжать',     assoc:'🏁 an (к) + kommen (приходить) = прибывать',              sentence:'Wir kommen um 18 Uhr in Wien an.' },
+  { id:68, word:'umsteigen',     article:'',    base:'umsteigen', emoji:'🔀',  level:'A2', theme:'Reisen',    trans:'Делать пересадку',         assoc:'🔀 um (пере-) + steigen (садиться) = пересадка',          sentence:'In Frankfurt müssen Sie umsteigen.' },
+  { id:69, word:'die Unterkunft',article:'die', base:'Unterkunft',emoji:'🏕️', level:'A2', theme:'Reisen',    trans:'Жильё, ночлег',            assoc:'🏕️ unter + kommen = место где можно остановиться',         sentence:'Wir haben eine günstige Unterkunft gefunden.' },
+  { id:70, word:'der Urlaub',    article:'der', base:'Urlaub',    emoji:'🌴',  level:'A2', theme:'Reisen',    trans:'Отпуск',                   assoc:'🌴 ur + Erlaubnis = "разрешение уйти" → отпуск',           sentence:'Ich fahre im Sommer in den Urlaub.' },
+
+  // ── A2 — Einkaufen ──
+  { id:71, word:'der Supermarkt',article:'der', base:'Supermarkt',emoji:'🛒',  level:'A2', theme:'Einkaufen', trans:'Супермаркет',              assoc:'🛒 Supermarkt — то же слово!',                              sentence:'Ich gehe jeden Samstag in den Supermarkt.' },
+  { id:72, word:'die Kasse',     article:'die', base:'Kasse',     emoji:'💳',  level:'A2', theme:'Einkaufen', trans:'Касса',                    assoc:'💳 касса — то же слово в русском!',                          sentence:'Bitte zahlen Sie an der Kasse.' },
+  { id:73, word:'der Preis',     article:'der', base:'Preis',     emoji:'🏷️', level:'A2', theme:'Einkaufen', trans:'Цена, приз',               assoc:'🏷️ price → Preis — почти одинаково!',                       sentence:'Was kostet das? Der Preis ist 25 Euro.' },
+  { id:74, word:'das Angebot',   article:'das', base:'Angebot',   emoji:'🔖',  level:'A2', theme:'Einkaufen', trans:'Предложение, акция',       assoc:'🔖 anbieten (предлагать) → Angebot',                        sentence:'Diese Jacke ist im Angebot, 30% billiger.' },
+  { id:75, word:'die Größe',     article:'die', base:'Größe',     emoji:'📐',  level:'A2', theme:'Einkaufen', trans:'Размер',                   assoc:'📐 groß (большой) → Größe (размер)',                        sentence:'Welche Größe haben Sie? — Größe 42.' },
+  { id:76, word:'umtauschen',    article:'',    base:'umtauschen',emoji:'🔁',  level:'A2', theme:'Einkaufen', trans:'Обменивать товар',         assoc:'🔁 um (обратно) + tauschen (менять) = обменять',           sentence:'Kann ich dieses Hemd umtauschen?' },
+
+  // ── A2 — Freizeit & Hobbys ──
+  { id:77, word:'das Hobby',     article:'das', base:'Hobby',     emoji:'🎨',  level:'A2', theme:'Freizeit',  trans:'Хобби',                    assoc:'🎨 hobby — то же слово!',                                   sentence:'Mein Hobby ist Malen und Fotografieren.' },
+  { id:78, word:'der Sport',     article:'der', base:'Sport',     emoji:'⚽',  level:'A2', theme:'Freizeit',  trans:'Спорт',                    assoc:'⚽ sport — то же слово!',                                    sentence:'Ich mache dreimal pro Woche Sport.' },
+  { id:79, word:'das Konzert',   article:'das', base:'Konzert',   emoji:'🎵',  level:'A2', theme:'Freizeit',  trans:'Концерт',                  assoc:'🎵 concert / концерт — то же слово!',                       sentence:'Wir gehen heute Abend ins Konzert.' },
+  { id:80, word:'das Kino',      article:'das', base:'Kino',      emoji:'🎬',  level:'A2', theme:'Freizeit',  trans:'Кино, кинотеатр',          assoc:'🎬 cinema → Kino (сокращение!)',                            sentence:'Gehen wir ins Kino? — Ja, gern!' },
+  { id:81, word:'die Mannschaft',article:'die', base:'Mannschaft',emoji:'👥',  level:'A2', theme:'Freizeit',  trans:'Команда',                  assoc:'👥 Mann (мужчина) + schaft = команда; от нем. спорта',     sentence:'Die Mannschaft hat 3:1 gewonnen.' },
+  { id:82, word:'trainieren',    article:'',    base:'trainieren',emoji:'🏋️', level:'A2', theme:'Freizeit',  trans:'Тренироваться',            assoc:'🏋️ train → trainieren — то же слово!',                     sentence:'Ich trainiere jeden Morgen eine Stunde.' },
+
+  // ── A2 — Wetter ──
+  { id:83, word:'das Wetter',    article:'das', base:'Wetter',    emoji:'🌤️', level:'A2', theme:'Wetter',    trans:'Погода',                   assoc:'🌤️ weather → Wetter — похожи!',                            sentence:'Das Wetter ist heute wechselhaft.' },
+  { id:84, word:'der Regen',     article:'der', base:'Regen',     emoji:'🌧️', level:'A2', theme:'Wetter',    trans:'Дождь',                    assoc:'🌧️ rain → Regen — похожи!',                                sentence:'Es gibt viel Regen im Herbst.' },
+  { id:85, word:'der Schnee',    article:'der', base:'Schnee',    emoji:'❄️',  level:'A2', theme:'Wetter',    trans:'Снег',                     assoc:'❄️ snow → Schnee — из одного корня',                        sentence:'Im Winter fällt viel Schnee in Bayern.' },
+  { id:86, word:'die Sonne',     article:'die', base:'Sonne',     emoji:'☀️',  level:'A2', theme:'Wetter',    trans:'Солнце',                   assoc:'☀️ sun → Sonne — из одного корня!',                        sentence:'Die Sonne scheint den ganzen Tag.' },
+  { id:87, word:'bewölkt',       article:'',    base:'bewölkt',   emoji:'☁️',  level:'A2', theme:'Wetter',    trans:'Облачно, пасмурно',        assoc:'☁️ Wolke (облако) → bewölkt = покрытый облаками',          sentence:'Es ist heute bewölkt und kühl.' },
+
+  // ── A2 — Adjektive A2 ──
+  { id:88, word:'groß',          article:'',    base:'groß',      emoji:'📏',  level:'A2', theme:'Adjektive', trans:'Большой, высокий',         assoc:'📏 gross → großartig = великолепный',                       sentence:'Berlin ist eine große Stadt.' },
+  { id:89, word:'schön',         article:'',    base:'schön',     emoji:'✨',  level:'A2', theme:'Adjektive', trans:'Красивый, прекрасный',     assoc:'✨ schön → "шён" → употребляется очень часто!',             sentence:'Das Wetter ist heute sehr schön.' },
+  { id:90, word:'teuer',         article:'',    base:'teuer',     emoji:'💰',  level:'A2', theme:'Adjektive', trans:'Дорогой',                  assoc:'💸 "дорогой" по-немецки teuer, "дорогой" = dear (англ.)',  sentence:'Das Kleid ist zu teuer.' },
+  { id:91, word:'billig',        article:'',    base:'billig',    emoji:'🏷️', level:'A2', theme:'Adjektive', trans:'Дешёвый',                  assoc:'🏷️ billig → "биллиг" — встречается на ценниках',           sentence:'Im Supermarkt gibt es billige Produkte.' },
+  { id:92, word:'wichtig',       article:'',    base:'wichtig',   emoji:'⭐',  level:'A2', theme:'Adjektive', trans:'Важный',                   assoc:'⭐ wichtig → weight (вес) — весомый, важный',               sentence:'Gesundheit ist sehr wichtig.' },
+  { id:93, word:'müde',          article:'',    base:'müde',      emoji:'😴',  level:'A2', theme:'Adjektive', trans:'Усталый, сонный',          assoc:'😴 müde → "мюдэ" — запомни: мы-де устали',                 sentence:'Ich bin sehr müde, ich gehe schlafen.' },
+  { id:94, word:'froh',          article:'',    base:'froh',      emoji:'😊',  level:'A2', theme:'Adjektive', trans:'Радостный, рад',           assoc:'😊 froh → fröhlich = весёлый; Frohe Weihnachten!',         sentence:'Ich bin froh, dass du hier bist.' },
+  { id:95, word:'schwierig',     article:'',    base:'schwierig', emoji:'😅',  level:'A2', theme:'Adjektive', trans:'Трудный, сложный',         assoc:'😅 schwer (тяжёлый) → schwierig (трудный)',                sentence:'Deutsch ist manchmal schwierig, aber interessant.' },
+
+  // ── A2 — Verben A2 ──
+  { id:96, word:'helfen',        article:'',    base:'helfen',    emoji:'🤝',  level:'A2', theme:'Verben A2', trans:'Помогать',                 assoc:'🤝 help → helfen — из одного корня!',                       sentence:'Kannst du mir bitte helfen?' },
+  { id:97, word:'vergessen',     article:'',    base:'vergessen', emoji:'🫥',  level:'A2', theme:'Verben A2', trans:'Забывать',                 assoc:'🫥 ver + gessen → "забыть совсем"',                         sentence:'Ich habe mein Handy vergessen.' },
+  { id:98, word:'treffen',       article:'',    base:'treffen',   emoji:'👋',  level:'A2', theme:'Verben A2', trans:'Встречать(ся)',            assoc:'👋 treffen → sich treffen = встречаться',                  sentence:'Wir treffen uns um 18 Uhr am Bahnhof.' },
+  { id:99, word:'brauchen',      article:'',    base:'brauchen',  emoji:'🔧',  level:'A2', theme:'Verben A2', trans:'Нуждаться, нужно',         assoc:'🔧 brauchen → "мне нужно" — одна из частых фраз',          sentence:'Ich brauche deine Hilfe.' },
+  { id:100,word:'anrufen',       article:'',    base:'anrufen',   emoji:'📞',  level:'A2', theme:'Verben A2', trans:'Звонить (по телефону)',    assoc:'📞 an + rufen (кричать) = позвонить кому-то',              sentence:'Ich rufe dich morgen an.' },
+  { id:101,word:'erklären',      article:'',    base:'erklären',  emoji:'💡',  level:'A2', theme:'Verben A2', trans:'Объяснять',                assoc:'💡 klar (ясно) → erklären = делать ясным',                 sentence:'Kannst du mir das erklären?' },
+  { id:102,word:'aufmachen',     article:'',    base:'aufmachen', emoji:'🔓',  level:'A2', theme:'Verben A2', trans:'Открывать',                assoc:'🔓 auf (открыто) + machen (делать) = открыть',             sentence:'Machst du bitte das Fenster auf?' },
+
+  // ── B1 — Gesellschaft & Meinung ──
+  { id:103,word:'die Meinung',   article:'die', base:'Meinung',   emoji:'💭',  level:'B1', theme:'Gesellschaft',trans:'Мнение',               assoc:'💬 meinen (считать) → Meinung; Meiner Meinung nach...',     sentence:'Meiner Meinung nach ist das falsch.' },
+  { id:104,word:'das Gespräch',  article:'das', base:'Gespräch',  emoji:'💬',  level:'B1', theme:'Gesellschaft',trans:'Разговор, беседа',      assoc:'🗣️ sprechen → Gespräch; das Gespräch suchen = поговорить',sentence:'Wir hatten ein interessantes Gespräch.' },
+  { id:105,word:'die Lösung',    article:'die', base:'Lösung',    emoji:'💡',  level:'B1', theme:'Gesellschaft',trans:'Решение, выход',        assoc:'💡 lösen (решать) → Lösung; eine Lösung finden',           sentence:'Wir suchen eine Lösung für das Problem.' },
+  { id:106,word:'der Vorschlag', article:'der', base:'Vorschlag', emoji:'🤔',  level:'B1', theme:'Gesellschaft',trans:'Предложение (идея)',    assoc:'💡 vorschlagen = предложить → Vorschlag',                  sentence:'Ich habe einen Vorschlag: Gehen wir ins Kino!' },
+  { id:107,word:'die Diskussion',article:'die', base:'Diskussion',emoji:'🗣️', level:'B1', theme:'Gesellschaft',trans:'Дискуссия, спор',      assoc:'🗣️ discussion / дискуссия — то же слово!',                sentence:'Die Diskussion war sehr lebhaft.' },
+  { id:108,word:'das Argument',  article:'das', base:'Argument',  emoji:'⚖️',  level:'B1', theme:'Gesellschaft',trans:'Аргумент, довод',      assoc:'⚖️ argument / аргумент — то же слово!',                   sentence:'Das ist ein gutes Argument.' },
+  { id:109,word:'die Verantwortung',article:'die',base:'Verantwortung',emoji:'🎯',level:'B1',theme:'Gesellschaft',trans:'Ответственность',   assoc:'🎯 verantworten = отвечать за → Verantwortung',            sentence:'Wir tragen Verantwortung für die Umwelt.' },
+  { id:110,word:'die Gelegenheit',article:'die',base:'Gelegenheit',emoji:'🌟', level:'B1', theme:'Gesellschaft',trans:'Возможность, случай',  assoc:'🌟 gelegen (удобный) → Gelegenheit = удобный случай',      sentence:'Das ist eine gute Gelegenheit, Deutsch zu üben.' },
+
+  // ── B1 — Umwelt & Natur ──
+  { id:111,word:'die Umwelt',    article:'die', base:'Umwelt',    emoji:'🌍',  level:'B1', theme:'Umwelt',    trans:'Окружающая среда',         assoc:'🌿 um (вокруг) + Welt (мир) = мир вокруг нас',             sentence:'Wir müssen die Umwelt schützen.' },
+  { id:112,word:'der Müll',      article:'der', base:'Müll',      emoji:'🗑️', level:'B1', theme:'Umwelt',    trans:'Мусор, отходы',            assoc:'🗑️ Müll trennen = сортировать мусор — обязательно в Германии!',sentence:'Bitte wirf den Müll nicht auf die Straße.' },
+  { id:113,word:'die Energie',   article:'die', base:'Energie',   emoji:'⚡',  level:'B1', theme:'Umwelt',    trans:'Энергия',                  assoc:'⚡ energy / энергия — то же слово!',                        sentence:'Wir brauchen mehr erneuerbare Energie.' },
+  { id:114,word:'der Klimawandel',article:'der',base:'Klimawandel',emoji:'🌡️',level:'B1', theme:'Umwelt',    trans:'Изменение климата',        assoc:'🌡️ Klima (климат) + Wandel (изменение)',                   sentence:'Der Klimawandel ist eine ernste Bedrohung.' },
+  { id:115,word:'recyceln',      article:'',    base:'recyceln',  emoji:'♻️',  level:'B1', theme:'Umwelt',    trans:'Перерабатывать (мусор)',   assoc:'♻️ recycle → recyceln — то же слово!',                     sentence:'Wir recyceln Papier, Glas und Plastik.' },
+  { id:116,word:'nachhaltig',    article:'',    base:'nachhaltig',emoji:'🌱',  level:'B1', theme:'Umwelt',    trans:'Устойчивый, экологичный',  assoc:'🌱 nach + halten = держать после; sustainable',            sentence:'Wir versuchen, nachhaltig zu leben.' },
+  { id:117,word:'die Ressource', article:'die', base:'Ressource', emoji:'🔋',  level:'B1', theme:'Umwelt',    trans:'Ресурс',                   assoc:'🔋 resource / ресурс — то же слово!',                       sentence:'Wir müssen unsere Ressourcen schonen.' },
+
+  // ── B1 — Bildung & Schule ──
+  { id:118,word:'die Prüfung',   article:'die', base:'Prüfung',   emoji:'📝',  level:'B1', theme:'Bildung',   trans:'Экзамен, тест',            assoc:'📝 prüfen (проверять) → Prüfung = проверка',               sentence:'Ich lerne für die Prüfung.' },
+  { id:119,word:'das Studium',   article:'das', base:'Studium',   emoji:'🎓',  level:'B1', theme:'Bildung',   trans:'Учёба в вузе',             assoc:'🎓 studieren → Studium → study/студия',                    sentence:'Das Studium dauert drei Jahre.' },
+  { id:120,word:'der Kurs',      article:'der', base:'Kurs',      emoji:'📖',  level:'B1', theme:'Bildung',   trans:'Курс, занятие',            assoc:'📚 курс — то же слово в русском!',                          sentence:'Ich mache einen Sprachkurs.' },
+  { id:121,word:'das Zeugnis',   article:'das', base:'Zeugnis',   emoji:'📋',  level:'B1', theme:'Bildung',   trans:'Аттестат, свидетельство',  assoc:'📋 Zeuge (свидетель) → Zeugnis = свидетельство об окончании',sentence:'Er hat ein sehr gutes Zeugnis bekommen.' },
+  { id:122,word:'sich bewerben', article:'',    base:'sich bewerben',emoji:'📨',level:'B1',theme:'Bildung',   trans:'Подавать заявление',       assoc:'📨 bewerben = рекламировать себя → подать заявку',         sentence:'Ich bewerbe mich um einen Studienplatz.' },
+  { id:123,word:'das Stipendium',article:'das', base:'Stipendium',emoji:'🏆',  level:'B1', theme:'Bildung',   trans:'Стипендия',                assoc:'🏆 stipendium / стипендия — то же слово!',                  sentence:'Sie hat ein Stipendium für ihr Studium bekommen.' },
+
+  // ── B1 — Medien & Technologie ──
+  { id:124,word:'das Internet',  article:'das', base:'Internet',  emoji:'🌐',  level:'B1', theme:'Medien',    trans:'Интернет',                 assoc:'🌐 Internet — то же слово!',                                sentence:'Ohne Internet kann ich nicht arbeiten.' },
+  { id:125,word:'das Handy',     article:'das', base:'Handy',     emoji:'📱',  level:'B1', theme:'Medien',    trans:'Мобильный телефон',        assoc:'📱 handy (удобный по-английски) — немцы придумали это слово!',sentence:'Hast du dein Handy dabei?' },
+  { id:126,word:'die Nachricht', article:'die', base:'Nachricht', emoji:'📩',  level:'B1', theme:'Medien',    trans:'Новость, сообщение',       assoc:'📩 nach + Richt = направленная вслед (весть)',             sentence:'Ich habe eine Nachricht auf dem Handy.' },
+  { id:127,word:'die Sendung',   article:'die', base:'Sendung',   emoji:'📺',  level:'B1', theme:'Medien',    trans:'Передача, программа',      assoc:'📺 senden (посылать) → Sendung (то что посылают в эфир)',  sentence:'Diese Sendung läuft jeden Dienstag um 20 Uhr.' },
+  { id:128,word:'herunterladen', article:'',    base:'herunterladen',emoji:'⬇️',level:'B1',theme:'Medien',   trans:'Скачивать (файл)',         assoc:'⬇️ herunter (вниз) + laden (загружать) = download',        sentence:'Ich lade die App herunter.' },
+  { id:129,word:'die Datei',     article:'die', base:'Datei',     emoji:'📁',  level:'B1', theme:'Medien',    trans:'Файл, документ',           assoc:'📁 Daten (данные) → Datei = файл с данными',               sentence:'Bitte schick mir die Datei per E-Mail.' },
+
+  // ── B1 — Konnektoren & Strukturwörter ──
+  { id:130,word:'obwohl',        article:'',    base:'obwohl',    emoji:'🔄',  level:'B1', theme:'Konnektoren',trans:'Хотя, несмотря на то что',assoc:'↔️ obwohl = although — уступка, глагол в конце!',          sentence:'Obwohl es regnet, gehe ich spazieren.' },
+  { id:131,word:'damit',         article:'',    base:'damit',     emoji:'🎯',  level:'B1', theme:'Konnektoren',trans:'Чтобы (для того чтобы)',  assoc:'🎯 damit = so that — выражает цель',                       sentence:'Ich lerne, damit ich die Prüfung bestehe.' },
+  { id:132,word:'deswegen',      article:'',    base:'deswegen',  emoji:'➡️',  level:'B1', theme:'Konnektoren',trans:'Поэтому, из-за этого',    assoc:'➡️ des-wegen = из-за этого → поэтому; des-halb тоже',      sentence:'Es regnet, deswegen bleibe ich zu Hause.' },
+  { id:133,word:'allerdings',    article:'',    base:'allerdings',emoji:'🤔',  level:'B1', theme:'Konnektoren',trans:'Однако, правда (но)',      assoc:'🤔 allerdings = however / admittedly — частичное согласие',sentence:'Das Hotel ist schön, allerdings sehr teuer.' },
+  { id:134,word:'trotzdem',      article:'',    base:'trotzdem',  emoji:'💪',  level:'B1', theme:'Konnektoren',trans:'Тем не менее, всё равно',  assoc:'💪 trotz (вопреки) + dem → trotzdem = nevertheless',       sentence:'Es war kalt, trotzdem sind wir gewandert.' },
+  { id:135,word:'außerdem',      article:'',    base:'außerdem',  emoji:'➕',  level:'B1', theme:'Konnektoren',trans:'Кроме того, к тому же',    assoc:'➕ außer (кроме) + dem = кроме того; moreover',            sentence:'Er ist intelligent, außerdem sehr fleißig.' },
+  { id:136,word:'zwar … aber',   article:'',    base:'zwar … aber',emoji:'⚖️', level:'B1', theme:'Konnektoren',trans:'Конечно … но / правда … но',assoc:'⚖️ zwar = admittedly; zwar...aber = it is true...but',    sentence:'Das Buch ist zwar lang, aber sehr interessant.' },
+  { id:137,word:'einerseits … andererseits',article:'',base:'einerseits … andererseits',emoji:'↕️',level:'B1',theme:'Konnektoren',trans:'С одной стороны … с другой стороны',assoc:'↕️ einer-seits = one side; on one hand / on the other',sentence:'Einerseits ist es teuer, andererseits ist es qualitativ.' },
+
+  // ── B1 — Verben B1 ──
+  { id:138,word:'sich vorstellen',article:'',  base:'sich vorstellen',emoji:'👤',level:'B1',theme:'Verben B1', trans:'Представляться / представлять',assoc:'👤 vor+stellen = ставить перед → представить; 2 значения!',sentence:'Ich möchte mich kurz vorstellen.' },
+  { id:139,word:'beschreiben',   article:'',    base:'beschreiben',emoji:'🖊️', level:'B1', theme:'Verben B1', trans:'Описывать',                assoc:'🖊️ beschreiben → describe — описать что-то письменно',    sentence:'Können Sie das Problem genau beschreiben?' },
+  { id:140,word:'vergleichen',   article:'',    base:'vergleichen',emoji:'⚖️',  level:'B1', theme:'Verben B1', trans:'Сравнивать',               assoc:'⚖️ compare → vergleichen — у обоих корень "равно"',        sentence:'Vergleichen Sie die beiden Angebote!' },
+  { id:141,word:'vorschlagen',   article:'',    base:'vorschlagen',emoji:'💡',  level:'B1', theme:'Verben B1', trans:'Предлагать (идею)',         assoc:'💡 vor + schlagen = выдвинуть предложение',                sentence:'Ich möchte etwas vorschlagen.' },
+  { id:142,word:'sich beschweren',article:'',  base:'sich beschweren',emoji:'😤',level:'B1',theme:'Verben B1',trans:'Жаловаться',               assoc:'😤 schwer (тяжело) → sich beschweren = нагружать жалобой', sentence:'Er hat sich beim Chef über die Situation beschwert.' },
+  { id:143,word:'überzeugen',    article:'',    base:'überzeugen', emoji:'🎯',  level:'B1', theme:'Verben B1', trans:'Убеждать',                 assoc:'🎯 über + zeugen = произвести впечатление; convince',      sentence:'Das hat mich überzeugt.' },
+  { id:144,word:'sich entscheiden',article:'', base:'sich entscheiden',emoji:'🔀',level:'B1',theme:'Verben B1',trans:'Принимать решение',       assoc:'🔀 entscheiden → decide; ent + scheiden = разделить',      sentence:'Ich kann mich nicht entscheiden.' },
+  { id:145,word:'vermeiden',     article:'',    base:'vermeiden',  emoji:'🚫',  level:'B1', theme:'Verben B1', trans:'Избегать',                 assoc:'🚫 ver + meiden = держаться подальше; avoid',              sentence:'Wir sollten Plastik vermeiden.' },
+
+  // ── B1 — Wohnen B1 ──
+  { id:146,word:'die Miete',     article:'die', base:'Miete',     emoji:'🏠',  level:'B1', theme:'Wohnen B1', trans:'Аренда, квартплата',       assoc:'💸 mieten (арендовать) → Miete; Mietvertrag = договор',    sentence:'Die Miete in München ist sehr hoch.' },
+  { id:147,word:'der Vermieter', article:'der', base:'Vermieter', emoji:'🔑',  level:'B1', theme:'Wohnen B1', trans:'Арендодатель, хозяин',     assoc:'🔑 vermieten = сдавать в аренду → Vermieter = тот кто сдаёт',sentence:'Der Vermieter wohnt im gleichen Haus.' },
+  { id:148,word:'der Nachbar',   article:'der', base:'Nachbar',   emoji:'👫',  level:'B1', theme:'Wohnen B1', trans:'Сосед',                    assoc:'👫 nach + bar = тот кто живёт рядом (nach = рядом)',       sentence:'Mein Nachbar ist sehr freundlich.' },
+  { id:149,word:'renovieren',    article:'',    base:'renovieren', emoji:'🔨',  level:'B1', theme:'Wohnen B1', trans:'Renovieren',               assoc:'🔨 renovate / renovieren — то же слово!',                  sentence:'Wir renovieren die Wohnung im Sommer.' },
+  { id:150,word:'die Nebenkosten',article:'die',base:'Nebenkosten',emoji:'💡', level:'B1', theme:'Wohnen B1', trans:'Коммунальные расходы',     assoc:'💡 neben (рядом) + Kosten (расходы) = доп. расходы',      sentence:'Die Nebenkosten betragen 150 Euro pro Monat.' },
+
+  // ── B1 — Gesundheit B1 ──
+  { id:151,word:'die Ernährung', article:'die', base:'Ernährung',  emoji:'🥗',  level:'B1', theme:'Gesundheit B1',trans:'Питание, рацион',     assoc:'🥗 ernähren = кормить → Ernährung = питание',             sentence:'Eine gesunde Ernährung ist sehr wichtig.' },
+  { id:152,word:'die Allergie',  article:'die', base:'Allergie',   emoji:'🤧',  level:'B1', theme:'Gesundheit B1',trans:'Аллергия',             assoc:'🤧 allergy / аллергия — то же слово!',                    sentence:'Ich habe eine Allergie gegen Katzenhaare.' },
+  { id:153,word:'die Vorsorge',  article:'die', base:'Vorsorge',   emoji:'🛡️', level:'B1', theme:'Gesundheit B1',trans:'Профилактика, страховка',assoc:'🛡️ vor (перед) + Sorge (забота) = забота заранее',      sentence:'Vorsorge ist besser als Behandlung.' },
+  { id:154,word:'die Versicherung',article:'die',base:'Versicherung',emoji:'📄',level:'B1',theme:'Gesundheit B1',trans:'Страховка',            assoc:'📄 versichern = застраховать → Krankenversicherung',       sentence:'In Deutschland braucht jeder eine Krankenversicherung.' },
+
+  // ── B1 — Arbeit B1 ──
+  { id:155,word:'die Bewerbung', article:'die', base:'Bewerbung',  emoji:'📨',  level:'B1', theme:'Arbeit B1', trans:'Заявление о приёме, резюме',assoc:'📨 sich bewerben → Bewerbung; Lebenslauf = CV',           sentence:'Ich schreibe gerade meine Bewerbung.' },
+  { id:156,word:'das Vorstellungsgespräch',article:'das',base:'Vorstellungsgespräch',emoji:'🤵',level:'B1',theme:'Arbeit B1',trans:'Собеседование',assoc:'🤵 sich vorstellen + Gespräch = разговор для знакомства', sentence:'Morgen habe ich ein Vorstellungsgespräch.' },
+  { id:157,word:'die Weiterbildung',article:'die',base:'Weiterbildung',emoji:'📈',level:'B1',theme:'Arbeit B1',trans:'Повышение квалификации', assoc:'📈 weiter (дальше) + Bildung (образование) = учиться дальше',sentence:'Die Firma bezahlt meine Weiterbildung.' },
+  { id:158,word:'selbstständig', article:'',    base:'selbstständig',emoji:'💼', level:'B1', theme:'Arbeit B1', trans:'Самозанятый, независимый',assoc:'💼 selbst (сам) + ständig (постоянно) = самостоятельный',  sentence:'Er arbeitet selbstständig als Designer.' },
+];
+
+const EXERCISES = [
+  // ══════════════════════════════════════════
+  // LESEN
+  // ══════════════════════════════════════════
+  {
+    id:'l1', type:'lesen', title:'Lesen 1 — Wohnanzeige', icon:'📖', desc:'A2: Wohnungsanzeige verstehen',
+    badge:'A2', badgeColor:'#dbeafe',
+    content: {
+      kind:'mc',
+      text:`**Wohnungsanzeige**\n\nSchöne 2-Zimmer-Wohnung im Zentrum zu vermieten. 65 m², 2. Etage, Balkon, Einbauküche. Warmmiete 850 €. Keine Haustiere! Kaltmiete 700 €, Nebenkosten 150 €. Kontakt: Tel. 089-4521876, Mo–Fr 9–17 Uhr.`,
+      questions: [
+        { q:'Wie groß ist die Wohnung?', opts:['45 m²','65 m²','75 m²','85 m²'], ans:1 },
+        { q:'Was kostet die Wohnung insgesamt?', opts:['700 €','150 €','850 €','950 €'], ans:2 },
+        { q:'Was ist in der Wohnung NICHT erlaubt?', opts:['Balkon haben','Kochen','Haustiere halten','Telefon benutzen'], ans:2 },
+      ]
+    }
+  },
+  {
+    id:'l2', type:'lesen', title:'Lesen Teil 2', icon:'📰', desc:'Kurze Texte und Anzeigen',
+    badge:'A2–B1', badgeColor:'#dbeafe',
+    content: {
+      kind:'mc',
+      text:`**Aus der Zeitung:**\n\nDie Stadt München plant, ab nächstem Jahr kostenlose Deutschkurse für alle neuen Einwohner anzubieten. Die Kurse finden dreimal pro Woche statt und dauern jeweils zwei Stunden. Anmeldungen sind ab sofort im Stadtbüro oder online möglich. Die Teilnehmerzahl ist auf 20 Personen pro Kurs begrenzt.`,
+      questions: [
+        { q:'Wie oft finden die Kurse statt?', opts:['Einmal pro Woche','Zweimal pro Woche','Dreimal pro Woche','Jeden Tag'], ans:2 },
+        { q:'Wie kann man sich anmelden?', opts:['Nur online','Nur im Stadtbüro','Im Stadtbüro oder online','Per Brief'], ans:2 },
+        { q:'Wie viele Personen dürfen an einem Kurs teilnehmen?', opts:['10','15','20','25'], ans:2 },
+      ]
+    }
+  },
+  {
+    id:'l3', type:'lesen', title:'Lesen Teil 3', icon:'✉️', desc:'Formeller Brief / E-Mail',
+    badge:'B1', badgeColor:'#fce7f3',
+    content: {
+      kind:'mc',
+      text:`**E-Mail:**\n\nSehr geehrte Damen und Herren,\n\nich schreibe Ihnen bezüglich meiner Bestellung vom 15. März (Bestellnummer: 4892-B). Leider habe ich das Paket bis heute noch nicht erhalten, obwohl auf der Website stand, dass die Lieferzeit 3–5 Werktage beträgt. Es sind jetzt bereits 10 Tage vergangen.\n\nIch bitte Sie, den Status meiner Bestellung zu überprüfen und mich so schnell wie möglich zu informieren.\n\nMit freundlichen Grüßen,\nTobias Schneider`,
+      questions: [
+        { q:'Warum schreibt Tobias Schneider?', opts:['Er möchte etwas bestellen','Er hat sein Paket nicht bekommen','Er will eine Bestellung stornieren','Er fragt nach dem Preis'], ans:1 },
+        { q:'Wie lange wartet er schon?', opts:['3 Tage','5 Tage','10 Tage','15 Tage'], ans:2 },
+        { q:'Was möchte er von der Firma?', opts:['Eine Rückerstattung','Den Status seiner Bestellung','Ein neues Produkt','Eine Entschuldigung'], ans:1 },
+      ]
+    }
+  },
+  // HÖREN
+  {
+    id:'h1', type:'hoeren', title:'Hören Teil 1', icon:'🎧', desc:'Kurze Dialoge verstehen',
+    badge:'A2–B1', badgeColor:'#d1fae5',
+    content: {
+      kind:'hoeren',
+      script: [
+        { speaker:'Frau Braun', text:'Entschuldigung, ich suche das Stadtmuseum. Können Sie mir helfen?' },
+        { speaker:'Mann', text:'Ja, natürlich! Gehen Sie diese Straße geradeaus, dann an der Ampel links. Das Museum ist dann rechts, direkt neben der Post.' },
+        { speaker:'Frau Braun', text:'Und wie weit ist das zu Fuß?' },
+        { speaker:'Mann', text:'Ungefähr zehn Minuten.' },
+        { speaker:'Frau Braun', text:'Vielen Dank!' },
+      ],
+      questions: [
+        { q:'Wonach fragt Frau Braun?', opts:['Nach dem Bahnhof','Nach dem Stadtmuseum','Nach dem Supermarkt','Nach der Post'], ans:1 },
+        { q:'Wo muss sie an der Ampel abbiegen?', opts:['Rechts','Geradeaus','Links','Zurück'], ans:2 },
+        { q:'Wie lange dauert der Weg zu Fuß?', opts:['5 Minuten','10 Minuten','15 Minuten','20 Minuten'], ans:1 },
+      ]
+    }
+  },
+  {
+    id:'h2', type:'hoeren', title:'Hören Teil 2', icon:'📻', desc:'Radionachrichten / Ansagen',
+    badge:'B1', badgeColor:'#d1fae5',
+    content: {
+      kind:'hoeren',
+      script: [
+        { speaker:'Moderatorin', text:'Guten Morgen, hier sind die Nachrichten. Heute, am Dienstag, dem 4. Juni, gibt es im Berufsverkehr erhebliche Verzögerungen auf der Autobahn A9 Richtung München. Ein Unfall zwischen zwei Lastwagen sorgt für einen Stau von etwa 12 Kilometern. Die Polizei empfiehlt, die Ausfahrt Garching zu nehmen und über die Bundesstraße B11 zu fahren.' },
+        { speaker:'Moderatorin', text:'Das Wetter für heute: Es bleibt bewölkt mit einzelnen Schauern am Nachmittag. Temperaturen zwischen 14 und 18 Grad.' },
+      ],
+      questions: [
+        { q:'Was ist der Grund für den Stau?', opts:['Baustelle','Unfall mit zwei Lkw','Starker Regen','Demonstration'], ans:1 },
+        { q:'Wie lang ist der Stau?', opts:['4 km','8 km','12 km','20 km'], ans:2 },
+        { q:'Wie wird das Wetter am Nachmittag?', opts:['Sonnig','Schnee','Schauer','Sturm'], ans:2 },
+      ]
+    }
+  },
+  {
+    id:'h3', type:'hoeren', title:'Hören Teil 3', icon:'🗣️', desc:'Längeres Gespräch',
+    badge:'B1', badgeColor:'#d1fae5',
+    content: {
+      kind:'hoeren',
+      script: [
+        { speaker:'Interviewer', text:'Frau Köhler, Sie arbeiten seit 5 Jahren als Lehrerin. Was gefällt Ihnen an Ihrem Beruf am besten?' },
+        { speaker:'Frau Köhler', text:'Ich liebe es, wenn ich sehe, dass die Kinder etwas Neues verstehen. Dieser Moment, wenn ein Kind sagt "Ach so, jetzt verstehe ich das!" – das ist unbezahlbar.' },
+        { speaker:'Interviewer', text:'Und was ist schwierig?' },
+        { speaker:'Frau Köhler', text:'Die Bürokratie leider. Wir haben sehr viel Papierkram und Berichte zu schreiben. Das kostet viel Zeit, die ich lieber mit den Schülern verbringen würde.' },
+      ],
+      questions: [
+        { q:'Was mag Frau Köhler an ihrem Beruf?', opts:['Das Gehalt','Den Urlaub','Wenn Kinder etwas verstehen','Die Bürokratie'], ans:2 },
+        { q:'Was findet sie schwierig?', opts:['Die Schüler','Den langen Schulweg','Die Bürokratie und Berichte','Das frühe Aufstehen'], ans:2 },
+        { q:'Wie lange arbeitet sie schon als Lehrerin?', opts:['2 Jahre','3 Jahre','5 Jahre','10 Jahre'], ans:2 },
+      ]
+    }
+  },
+  // SCHREIBEN
+  {
+    id:'s1', type:'schreiben', title:'Schreiben: E-Mail', icon:'✍️', desc:'Formelle E-Mail schreiben',
+    badge:'B1', badgeColor:'#fef3c7',
+    content: {
+      kind:'schreiben',
+      prompt:'Sie haben einen Deutschkurs gebucht, können aber jetzt nicht teilnehmen. Schreiben Sie eine E-Mail an die Sprachschule:\n• Warum Sie nicht kommen können\n• Ob der Kurs verschoben werden kann\n• Wann Sie Zeit hätten',
+      tips:['Beginnen Sie mit: Sehr geehrte Damen und Herren,','Schreiben Sie 3-4 Sätze pro Punkt','Schließen Sie mit: Mit freundlichen Grüßen','Mindestens 80 Wörter','Verwenden Sie: leider, jedoch, Ich würde mich freuen, wenn...'],
+      template:'Sehr geehrte Damen und Herren,\n\nich habe am [Datum] einen Kurs gebucht, aber leider...\n\n...\n\nIch würde mich freuen, wenn...\n\nMit freundlichen Grüßen,\n[Ihr Name]'
+    }
+  },
+  {
+    id:'s2', type:'schreiben', title:'Schreiben: Forumsbeitrag', icon:'💬', desc:'Meinung im Internet äußern',
+    badge:'B1', badgeColor:'#fef3c7',
+    content: {
+      kind:'schreiben',
+      prompt:'In einem Online-Forum wird diskutiert: "Sollten Autos in Stadtzentren verboten werden?" Schreiben Sie Ihren Beitrag:\n• Ihre Meinung\n• Zwei Argumente für Ihre Position\n• Alternativen vorschlagen',
+      tips:['Beginnen Sie mit Ihrer Meinung: Meiner Meinung nach...','Begründen Sie: weil, denn, da','Gegenargumente zugeben: Zwar... aber...','Schluss: Ich denke, dass...','Ca. 80-100 Wörter'],
+      template:'Ich bin der Meinung, dass...\n\nEin wichtiger Grund dafür ist, dass...\n\nAußerdem...\n\nNatürlich kann man auch sagen, dass... Aber...\n\nInsgesamt denke ich, dass...'
+    }
+  },
+  // SPRECHEN
+  {
+    id:'sp1', type:'sprechen', title:'Sprechen Teil 1', icon:'🗣️', desc:'Sich vorstellen',
+    badge:'A2–B1', badgeColor:'#fde8ea',
+    content: {
+      kind:'sprechen',
+      prompt:'Stellen Sie sich vor! Erzählen Sie über: Name, Herkunft, Wohnort, Familie, Beruf/Hobby, Warum lernen Sie Deutsch?',
+      tips:[
+        '👤 Name: "Ich heiße... / Mein Name ist..."',
+        '🌍 Herkunft: "Ich komme aus Russland / aus Moskau."',
+        '🏠 Wohnort: "Ich wohne in... seit... Jahren."',
+        '👨‍👩‍👧 Familie: "Ich bin verheiratet / ledig. Ich habe... Kinder."',
+        '💼 Beruf: "Ich arbeite als... / Ich bin... von Beruf."',
+        '🇩🇪 Deutsch: "Ich lerne Deutsch, weil..."',
+        'Dauer: ca. 2-3 Minuten',
+      ]
+    }
+  },
+  {
+    id:'sp2', type:'sprechen', title:'Sprechen Teil 2', icon:'🖼️', desc:'Bild beschreiben',
+    badge:'B1', badgeColor:'#fde8ea',
+    content: {
+      kind:'sprechen',
+      prompt:'Beschreiben Sie dieses Bild:\n\n🖼️ [Stellen Sie sich vor: Eine Familie sitzt am Tisch und frühstückt zusammen. Die Mutter schenkt Kaffee ein, zwei Kinder essen Brot. Auf dem Tisch liegen Brötchen, Obst und Marmelade. Es ist ein Sonntagmorgen.]',
+      tips:[
+        '📍 Wo: "Das Bild zeigt... / Auf dem Bild sehe ich..."',
+        '👥 Wer: "Im Vordergrund / Hintergrund sieht man..."',
+        '🎬 Was passiert: "Die Person... Die Familie..."',
+        '🌈 Details: "Man kann erkennen, dass..."',
+        '💭 Vermutung: "Ich glaube, dass... / Wahrscheinlich..."',
+        '😊 Gefühl: "Das Bild wirkt... (fröhlich, gemütlich...)"',
+      ]
+    }
+  },
+  {
+    id:'sp3', type:'sprechen', title:'Sprechen Teil 3', icon:'🤝', desc:'Gemeinsam planen',
+    badge:'B1', badgeColor:'#fde8ea',
+    content: {
+      kind:'sprechen',
+      prompt:'Aufgabe für 2 Personen: Planen Sie gemeinsam den Abschied von einem Kollegen.\nSie haben 50 €. Möglichkeiten:\n• Restaurant-Abendessen (35-60 €)\n• Kino + Pizza (25 €)\n• Picknick im Park (15 €)\n• Karaoke-Bar (40 €)',
+      tips:[
+        '💡 Vorschlag machen: "Wir könnten... / Wie wäre es mit...?"',
+        '✅ Zustimmen: "Das ist eine gute Idee! / Einverstanden!"',
+        '❌ Ablehnen: "Ich bin nicht sicher... / Das finde ich nicht so gut, weil..."',
+        '🤔 Begründen: "Das wäre besser, weil..."',
+        '🎯 Entscheiden: "Also, wir entscheiden uns für..."',
+        'Redezeit: ca. 3 Minuten zu zweit',
+      ]
+    }
+  },
+  // GRAMMATIK
+  {
+    id:'g1', type:'grammatik', title:'Sprachbausteine 1', icon:'🔧', desc:'Lückentext: Artikel und Kasus',
+    badge:'A2–B1', badgeColor:'#f3e8ff',
+    content: {
+      kind:'fill',
+      sentences: [
+        { text:'Ich kaufe ___ Brot beim Bäcker.', ans:'ein', hint:'unbestimmter Artikel, Akkusativ, das Brot' },
+        { text:'Das ist ___ Wohnung meiner Schwester.', ans:'die', hint:'bestimmter Artikel, Nominativ, die Wohnung' },
+        { text:'Er fährt mit ___ Zug nach Berlin.', ans:'dem', hint:'Dativ nach "mit", der Zug' },
+        { text:'Wir helfen ___ Kollegen.', ans:'dem', hint:'helfen + Dativ, der Kollege' },
+        { text:'Sie schreibt ___ Brief an ihren Freund.', ans:'einen', hint:'unbestimmter Artikel, Akkusativ, der Brief' },
+      ]
+    }
+  },
+  {
+    id:'g2', type:'grammatik', title:'Sprachbausteine 2', icon:'🔗', desc:'Konnektoren einsetzen',
+    badge:'B1', badgeColor:'#f3e8ff',
+    content: {
+      kind:'fill',
+      sentences: [
+        { text:'Ich lerne Deutsch, ___ ich in Deutschland arbeiten möchte.', ans:'weil', hint:'причина → weil (глагол в конце)' },
+        { text:'___ es kalt ist, trage ich eine Jacke.', ans:'Weil', hint:'причина в начале → Weil' },
+        { text:'Er sagt, ___ er morgen kommt.', ans:'dass', hint:'косвенная речь → dass' },
+        { text:'Ich lerne, ___ ich die Prüfung bestehe.', ans:'damit', hint:'цель → damit' },
+        { text:'___ sie müde war, arbeitete sie weiter.', ans:'Obwohl', hint:'противопоставление → obwohl' },
+      ]
+    }
+  },
+  {
+    id:'g3', type:'grammatik', title:'Perfekt üben', icon:'⏰', desc:'Прошедшее время Perfekt',
+    badge:'A2', badgeColor:'#f3e8ff',
+    content: {
+      kind:'fill',
+      sentences: [
+        { text:'Ich ___ gestern ins Kino gegangen. (sein/haben)', ans:'bin', hint:'gehen → sein + gegangen' },
+        { text:'Er ___ ein Buch gelesen. (sein/haben)', ans:'hat', hint:'lesen → haben + gelesen' },
+        { text:'Wir ___ nach München gefahren. (sein/haben)', ans:'sind', hint:'fahren → sein + gefahren' },
+        { text:'Sie ___ den Brief geschrieben. (sein/haben)', ans:'hat', hint:'schreiben → haben + geschrieben' },
+        { text:'Die Kinder ___ im Park gespielt. (sein/haben)', ans:'haben', hint:'spielen → haben + gespielt' },
+      ]
+    }
+  },
+
+  // ── Grammatik A2: Komparativ & Superlativ ──
+  {
+    id:'g4', type:'grammatik', title:'Komparativ & Superlativ', icon:'📊', desc:'A2: Степени сравнения прилагательных',
+    badge:'A2', badgeColor:'#f3e8ff',
+    content: {
+      kind:'fill',
+      sentences: [
+        { text:'München ist ___ als Hamburg. (groß →)', ans:'größer', hint:'groß → größer (Umlaut!)' },
+        { text:'Das ist das ___ Restaurant in der Stadt. (gut →)', ans:'beste', hint:'gut → besser → das beste (исключение!)' },
+        { text:'Im Winter ist es ___ als im Herbst. (kalt →)', ans:'kälter', hint:'kalt → kälter (Umlaut!)' },
+        { text:'Diese Aufgabe ist ___ als die erste. (schwierig →)', ans:'schwieriger', hint:'schwierig → schwieriger (регулярное)' },
+        { text:'Sie spricht ___ Deutsch als ich. (gut →)', ans:'besser', hint:'gut → besser (нерегулярное!)' },
+      ]
+    }
+  },
+
+  // ── Grammatik A2: Präpositionen + Dativ ──
+  {
+    id:'g5', type:'grammatik', title:'Präpositionen + Dativ', icon:'🗺️', desc:'A2: Предлоги с Dativ (mit, bei, nach, von, zu, aus, seit, von)',
+    badge:'A2', badgeColor:'#f3e8ff',
+    content: {
+      kind:'fill',
+      sentences: [
+        { text:'Ich fahre ___ dem Bus zur Arbeit.', ans:'mit', hint:'mit + Dativ = на (транспорте)' },
+        { text:'Er wohnt ___ seinen Eltern.', ans:'bei', hint:'bei + Dativ = у (кого-то)' },
+        { text:'Sie kommt ___ Russland.', ans:'aus', hint:'aus + Dativ = из (страна, город)' },
+        { text:'Ich lerne Deutsch ___ zwei Jahren.', ans:'seit', hint:'seit + Dativ = с (какого времени, до сих пор)' },
+        { text:'Wir gehen ___ dem Arzt.', ans:'zum', hint:'zu + dem = zum; zum Arzt gehen' },
+      ]
+    }
+  },
+
+  // ── Grammatik A2: Akkusativ ──
+  {
+    id:'g6', type:'grammatik', title:'Akkusativ — Artikel', icon:'🎯', desc:'A2: Akkusativ (прямое дополнение)',
+    badge:'A2', badgeColor:'#f3e8ff',
+    content: {
+      kind:'fill',
+      sentences: [
+        { text:'Ich kaufe ___ Apfel. (der Apfel)', ans:'einen', hint:'der → einen в Akkusativ; неопределённый артикль' },
+        { text:'Er trinkt ___ Kaffee. (der Kaffee)', ans:'den', hint:'der → den в Akkusativ; определённый артикль' },
+        { text:'Sie liest ___ Buch. (das Buch)', ans:'ein', hint:'das → ein в Akkusativ; das не меняется!' },
+        { text:'Wir besuchen ___ Mutter. (die Mutter)', ans:'die', hint:'die → die в Akkusativ; женский не меняется!' },
+        { text:'Hast du ___ Stift? (der Stift)', ans:'einen', hint:'der → einen в Akkusativ' },
+      ]
+    }
+  },
+
+  // ── Grammatik B1: Nebensätze mit weil/dass/wenn ──
+  {
+    id:'g7', type:'grammatik', title:'Nebensätze: weil, dass, wenn', icon:'🔗', desc:'B1: Придаточные предложения — глагол в конец!',
+    badge:'B1', badgeColor:'#f3e8ff',
+    content: {
+      kind:'fill',
+      sentences: [
+        { text:'Ich lerne Deutsch, ___ ich in Deutschland arbeiten möchte.', ans:'weil', hint:'причина (почему?) → weil + глагол в конце' },
+        { text:'Er sagt, ___ er morgen nicht kommen kann.', ans:'dass', hint:'косвенная речь → dass + глагол в конце' },
+        { text:'___ ich Zeit habe, lese ich gern Bücher.', ans:'Wenn', hint:'условие/время → Wenn; в начале → запятая' },
+        { text:'Ich glaube, ___ das eine gute Idee ist.', ans:'dass', hint:'meinен/glauben/sagen + dass' },
+        { text:'Sie ist traurig, ___ ihr Freund nicht kommt.', ans:'weil', hint:'причина грусти → weil' },
+      ]
+    }
+  },
+
+  // ── Grammatik B1: Konjunktiv II ──
+  {
+    id:'g8', type:'grammatik', title:'Konjunktiv II (würde/wäre/hätte)', icon:'🌈', desc:'B1: Сослагательное наклонение — вежливость и условия',
+    badge:'B1', badgeColor:'#f3e8ff',
+    content: {
+      kind:'fill',
+      sentences: [
+        { text:'Ich ___ gern nach Berlin reisen. (würde/wäre)', ans:'würde', hint:'würde + Infinitiv = would (вежливое желание)' },
+        { text:'Wenn ich Zeit hätte, ___ ich mehr Sport machen.', ans:'würde', hint:'würde + Inf. в главном предложении условия' },
+        { text:'___ du mir bitte helfen? (Höfliche Bitte)', ans:'Würdest', hint:'Würdest du...? = Не мог бы ты...?' },
+        { text:'Ohne deine Hilfe ___ ich das nicht geschafft.', ans:'hätte', hint:'hätte + Partizip II = would have' },
+        { text:'Das ___ wunderbar! (sein)', ans:'wäre', hint:'wäre = would be (sein → wäre)' },
+      ]
+    }
+  },
+
+  // ── Grammatik B1: Passiv ──
+  {
+    id:'g9', type:'grammatik', title:'Passiv: wird gemacht', icon:'🔄', desc:'B1: Пассивный залог — Vorgangspassiv',
+    badge:'B1', badgeColor:'#f3e8ff',
+    content: {
+      kind:'fill',
+      sentences: [
+        { text:'Das Auto ___ in Deutschland gebaut. (werden — Präsens)', ans:'wird', hint:'Passiv Präsens: wird + Partizip II' },
+        { text:'Die Briefe ___ jeden Tag geschrieben. (werden — Präsens, Plural)', ans:'werden', hint:'Plural → werden + Partizip II' },
+        { text:'Das Haus ___ letztes Jahr renoviert. (werden — Präteritum)', ans:'wurde', hint:'Passiv Präteritum: wurde + Partizip II' },
+        { text:'Hier ___ nicht geraucht! (Verbot)', ans:'wird', hint:'Verbots-Passiv: wird nicht + Partizip II' },
+        { text:'Der Fehler ___ von ihm gemacht worden.', ans:'ist', hint:'Passiv Perfekt: ist/sind + worden' },
+      ]
+    }
+  },
+
+  // ── Grammatik B1: Relativsätze ──
+  {
+    id:'g10', type:'grammatik', title:'Relativsätze', icon:'🔎', desc:'B1: Определительные придаточные предложения',
+    badge:'B1', badgeColor:'#f3e8ff',
+    content: {
+      kind:'fill',
+      sentences: [
+        { text:'Das ist das Buch, ___ ich dir empfohlen habe. (das Buch)', ans:'das', hint:'Relativpronomen: das Buch → das' },
+        { text:'Die Frau, ___ hier wohnt, ist meine Nachbarin. (die Frau)', ans:'die', hint:'Relativpronomen: die Frau → die' },
+        { text:'Der Mann, ___ ich gestern getroffen habe. (der Mann, Akkusativ)', ans:'den', hint:'Relativpronomen Akkusativ: der → den' },
+        { text:'Das ist die Stadt, ___ ich geboren bin. (in + die Stadt)', ans:'in der', hint:'Präp. + Relativpronomen: in + der Stadt → in der' },
+        { text:'Ich suche einen Arzt, ___ Russisch spricht. (der Arzt)', ans:'der', hint:'Relativpronomen Nominativ: der Arzt → der' },
+      ]
+    }
+  },
+
+  // ══════════════════════════════════════════
+  // LESEN (дополнительные тексты)
+  // ══════════════════════════════════════════
+  {
+    id:'l4', type:'lesen', title:'Lesen 4 — Zeitungsartikel', icon:'📰', desc:'A2: Короткая газетная статья',
+    badge:'A2', badgeColor:'#dbeafe',
+    content: {
+      kind:'mc',
+      text:`**Neue Radwege für Hamburg**\n\nDie Stadt Hamburg baut in diesem Jahr 50 neue Kilometer Radwege. Das Projekt kostet insgesamt 12 Millionen Euro. Viele Hamburger freuen sich darüber, weil sie lieber mit dem Fahrrad fahren als mit dem Auto. Die Arbeiten beginnen im April und enden im November. Während der Bauarbeiten kann es zu Verkehrsbehinderungen kommen.`,
+      questions: [
+        { q:'Wie viele neue Radwege werden gebaut?', opts:['15 km','30 km','50 km','80 km'], ans:2 },
+        { q:'Wann beginnen die Bauarbeiten?', opts:['Im Januar','Im März','Im April','Im November'], ans:2 },
+        { q:'Was kann während der Arbeiten passieren?', opts:['Mehr Radfahrer','Verkehrsprobleme','Schule ist zu','Günstigere Fahrkarten'], ans:1 },
+      ]
+    }
+  },
+  {
+    id:'l5', type:'lesen', title:'Lesen 5 — Forumsbeitrag', icon:'💬', desc:'B1: Meinungen im Internet lesen',
+    badge:'B1', badgeColor:'#dbeafe',
+    content: {
+      kind:'mc',
+      text:`**Online-Forum: "Homeoffice — ja oder nein?"**\n\n**Benutzer1:** Ich arbeite seit zwei Jahren im Homeoffice und finde es toll. Ich spare jeden Tag eine Stunde Fahrzeit und kann meine Arbeit besser einteilen.\n\n**Benutzer2:** Ich bin anderer Meinung. Im Büro habe ich mehr Kontakt zu meinen Kollegen. Zu Hause fühle ich mich oft einsam. Außerdem ist mein Arbeitszimmer sehr klein.\n\n**Benutzer3:** Das kommt auf den Beruf an. Als Lehrerin kann ich nicht im Homeoffice arbeiten. Aber für Büroangestellte ist es sicher eine gute Möglichkeit.`,
+      questions: [
+        { q:'Was spart Benutzer1 durch Homeoffice?', opts:['Geld','Fahrzeit','Ein Büro','Kollegen'], ans:1 },
+        { q:'Was kritisiert Benutzer2 am Homeoffice?', opts:['Zu viel Arbeit','Wenig Geld','Einsamkeit und kleines Zimmer','Schlechtes Internet'], ans:2 },
+        { q:'Was meint Benutzer3 über Homeoffice?', opts:['Alle sollten es machen','Es ist für alle schlecht','Es hängt vom Beruf ab','Lehrerinnen sollen es nutzen'], ans:2 },
+      ]
+    }
+  },
+  {
+    id:'l6', type:'lesen', title:'Lesen 6 — Reisebericht', icon:'✈️', desc:'B1: Längerer Bericht verstehen',
+    badge:'B1', badgeColor:'#dbeafe',
+    content: {
+      kind:'mc',
+      text:`**Zwei Wochen in Wien**\n\nIch war im Oktober zwei Wochen in Wien und war total begeistert. Die Stadt ist wunderschön, vor allem die historische Altstadt. Ich habe viele Museen besucht, zum Beispiel das Kunsthistorische Museum. Das Essen war ausgezeichnet — besonders der Wiener Schnitzel und der Apfelstrudel.\n\nAllerdings war die Stadt sehr teuer. Eine Nacht im Hotel kostete über 120 Euro, und auch die Restaurantpreise waren hoch. Trotzdem würde ich Wien sofort wieder besuchen. Es gibt so viel zu entdecken, und die Wiener sind sehr freundlich und hilfsbereit.`,
+      questions: [
+        { q:'Wann war die Person in Wien?', opts:['Im Sommer','Im Herbst','Im Winter','Im Frühling'], ans:1 },
+        { q:'Was war laut Text ein Problem?', opts:['Das Wetter','Die Museen','Die hohen Preise','Die Menschen'], ans:2 },
+        { q:'Möchte die Person Wien nochmals besuchen?', opts:['Nein, nie wieder','Ja, auf jeden Fall','Vielleicht','Das steht nicht im Text'], ans:1 },
+      ]
+    }
+  },
+  {
+    id:'l7', type:'lesen', title:'Lesen 7 — Stellenanzeige', icon:'💼', desc:'B1: Stellenanzeige lesen und verstehen',
+    badge:'B1', badgeColor:'#dbeafe',
+    content: {
+      kind:'mc',
+      text:`**Stellenanzeige: TechSolutions GmbH sucht Softwareentwickler/-in (m/w/d)**\n\nWir suchen ab sofort eine motivierte Person für unser Team in Berlin. Voraussetzungen: Abgeschlossenes Studium der Informatik oder ähnlicher Fachrichtung, mindestens 2 Jahre Berufserfahrung, sehr gute Deutschkenntnisse (min. B2), Englischkenntnisse von Vorteil. Wir bieten: Flexibles Arbeiten (auch Homeoffice möglich), 30 Urlaubstage, Weiterbildungsmöglichkeiten, Gehalt nach Vereinbarung. Bewerbungen bitte bis 30. Juni an: jobs@techsolutions.de`,
+      questions: [
+        { q:'Wie viele Jahre Erfahrung sind mindestens nötig?', opts:['1 Jahr','2 Jahre','3 Jahre','5 Jahre'], ans:1 },
+        { q:'Welche Sprachkenntnisse sind Pflicht?', opts:['Englisch B2','Deutsch B2','Französisch','Beide Sprachen gleich'], ans:1 },
+        { q:'Was wird in der Stelle NICHT angeboten?', opts:['Homeoffice','Weiterbildung','30 Urlaubstage','Firmenwagen'], ans:3 },
+      ]
+    }
+  },
+
+  // ══════════════════════════════════════════
+  // HÖREN (дополнительные)
+  // ══════════════════════════════════════════
+  {
+    id:'h4', type:'hoeren', title:'Hören 4 — Telefonat', icon:'📞', desc:'A2: Telefongespräch — Termin vereinbaren',
+    badge:'A2', badgeColor:'#d1fae5',
+    content: {
+      kind:'hoeren',
+      script: [
+        { speaker:'Rezeptionistin', text:'Praxis Dr. Hoffmann, guten Morgen.' },
+        { speaker:'Patient', text:'Guten Morgen, mein Name ist Schneider, Karl Schneider. Ich möchte gerne einen Termin beim Doktor Hoffmann.' },
+        { speaker:'Rezeptionistin', text:'Ja, natürlich. Worum geht es denn?' },
+        { speaker:'Patient', text:'Ich habe seit drei Tagen starke Rückenschmerzen.' },
+        { speaker:'Rezeptionistin', text:'Verstehe. Wie wäre es am Donnerstag, den 15., um 10:30 Uhr?' },
+        { speaker:'Patient', text:'Donnerstag passt mir gut. Um 10:30 Uhr — das ist perfekt.' },
+        { speaker:'Rezeptionistin', text:'Gut, ich notiere Sie. Bitte bringen Sie Ihre Krankenversicherungskarte mit.' },
+        { speaker:'Patient', text:'Natürlich, mache ich. Vielen Dank!' },
+      ],
+      questions: [
+        { q:'Was hat der Patient?', opts:['Kopfschmerzen','Rückenschmerzen','Erkältung','Fieber'], ans:1 },
+        { q:'Wann ist der Termin?', opts:['Montag 10:30','Mittwoch 10:00','Donnerstag 10:30','Freitag 11:00'], ans:2 },
+        { q:'Was soll der Patient mitbringen?', opts:['Reisepass','Rezept','Krankenversicherungskarte','Einen Brief'], ans:2 },
+      ]
+    }
+  },
+  {
+    id:'h5', type:'hoeren', title:'Hören 5 — Ansage Bahnhof', icon:'🚆', desc:'A2: Durchsage am Bahnhof verstehen',
+    badge:'A2', badgeColor:'#d1fae5',
+    content: {
+      kind:'hoeren',
+      script: [
+        { speaker:'Lautsprecher', text:'Achtung auf Gleis 7! Der ICE 592 nach Frankfurt Hauptbahnhof fährt heute mit einer Verspätung von etwa 20 Minuten ab. Grund ist eine technische Störung im Bereich Nürnberg. Wir bitten alle Reisenden nach Frankfurt, auf Gleis 7 zu warten. Die planmäßige Abfahrtszeit war 14:15 Uhr. Voraussichtliche Abfahrt ist jetzt um 14:35 Uhr. Wir entschuldigen uns für die Unannehmlichkeiten.' },
+      ],
+      questions: [
+        { q:'Wohin fährt der Zug?', opts:['Nach München','Nach Berlin','Nach Frankfurt','Nach Hamburg'], ans:2 },
+        { q:'Wie viel Verspätung hat der Zug?', opts:['10 Minuten','20 Minuten','30 Minuten','45 Minuten'], ans:1 },
+        { q:'Was ist der Grund für die Verspätung?', opts:['Unfall','Technische Störung','Schlechtes Wetter','Streik'], ans:1 },
+      ]
+    }
+  },
+  {
+    id:'h6', type:'hoeren', title:'Hören 6 — Reportage', icon:'📻', desc:'B1: Radioreportage über ein soziales Thema',
+    badge:'B1', badgeColor:'#d1fae5',
+    content: {
+      kind:'hoeren',
+      script: [
+        { speaker:'Reporterin', text:'Heute sprechen wir über Ehrenamt in Deutschland. Laut einer neuen Studie engagieren sich etwa 29 Millionen Deutsche ehrenamtlich — das sind fast 40 Prozent der Bevölkerung.' },
+        { speaker:'Reporterin', text:'Wir haben mit Stefan Braun gesprochen, der seit fünf Jahren als Trainer bei einem Jugendsportverein arbeitet — ohne Bezahlung.' },
+        { speaker:'Stefan Braun', text:'Für mich ist das Ehrenamt keine Pflicht, sondern eine Leidenschaft. Ich helfe gern den Kindern und sehe, wie sie sich entwickeln. Das gibt mir viel Freude und Energie.' },
+        { speaker:'Reporterin', text:'Experten sagen, dass Ehrenamt wichtig für den gesellschaftlichen Zusammenhalt ist. Ohne Freiwillige würden viele soziale Angebote einfach wegfallen.' },
+      ],
+      questions: [
+        { q:'Wie viele Menschen engagieren sich in Deutschland ehrenamtlich?', opts:['10 Millionen','20 Millionen','29 Millionen','40 Millionen'], ans:2 },
+        { q:'Was macht Stefan Braun ehrenamtlich?', opts:['Er hilft im Krankenhaus','Er ist Trainer bei einem Jugendverein','Er unterrichtet Deutsch','Er pflegt alte Menschen'], ans:1 },
+        { q:'Warum macht Stefan das Ehrenamt?', opts:['Wegen des Geldes','Wegen der Pflicht','Aus Leidenschaft und Freude','Wegen seiner Arbeit'], ans:2 },
+      ]
+    }
+  },
+  {
+    id:'h7', type:'hoeren', title:'Hören 7 — Diskussion', icon:'🗣️', desc:'B1: Alltagsdiskussion zwischen Freunden',
+    badge:'B1', badgeColor:'#d1fae5',
+    content: {
+      kind:'hoeren',
+      script: [
+        { speaker:'Anna', text:'Ich finde, wir sollten unseren Urlaub dieses Jahr in Europa verbringen. Es ist umweltfreundlicher als Fernreisen.' },
+        { speaker:'Markus', text:'Das stimmt zwar, aber ich war noch nie in Asien und wollte schon immer Thailand sehen.' },
+        { speaker:'Anna', text:'Ich verstehe das. Aber flugzeugfahren ist so schädlich für die Umwelt. Eine Flugreise nach Thailand erzeugt ungefähr zwei Tonnen CO₂ pro Person.' },
+        { speaker:'Markus', text:'Das ist ein gutes Argument. Aber man könnte ja CO₂-Zertifikate kaufen, um den Flug auszugleichen.' },
+        { speaker:'Anna', text:'Ob das wirklich hilft, ist umstritten. Ich schlage vor: diesmal Europa, nächstes Jahr dann vielleicht Asien?' },
+        { speaker:'Markus', text:'Okay, du hast mich überzeugt. Wo in Europa würdest du denn hinwollen?' },
+      ],
+      questions: [
+        { q:'Warum möchte Anna in Europa Urlaub machen?', opts:['Es ist billiger','Es ist umweltfreundlicher','Europa ist schöner','Sie hat Angst vor Flügen'], ans:1 },
+        { q:'Wohin möchte Markus reisen?', opts:['Nach Amerika','Nach Japan','Nach Thailand','Nach Australien'], ans:2 },
+        { q:'Wie endet die Diskussion?', opts:['Sie fahren nach Thailand','Markus entscheidet allein','Anna überzeugt Markus für Europa','Sie streiten weiter'], ans:2 },
+      ]
+    }
+  },
+
+  // ══════════════════════════════════════════
+  // SCHREIBEN (дополнительные)
+  // ══════════════════════════════════════════
+  {
+    id:'s3', type:'schreiben', title:'Schreiben: Beschwerde-Brief', icon:'😤', desc:'B1: Beschwerdebrief an eine Firma',
+    badge:'B1', badgeColor:'#fef3c7',
+    content: {
+      kind:'schreiben',
+      prompt:'Sie haben in einem Restaurant gegessen. Das Essen war kalt, die Bedienung war unhöflich, und Sie haben 30 Minuten auf Ihr Essen gewartet. Schreiben Sie einen Beschwerdebrief:\n• Was ist passiert (Datum, Restaurant)\n• Was hat Sie gestört (mindestens 2 Punkte)\n• Was erwarten Sie als Reaktion',
+      tips:[
+        'Beginnen Sie: Sehr geehrte Damen und Herren,',
+        'Datums-/Ortangabe: Am [Datum] habe ich Ihr Restaurant besucht.',
+        'Beschwerde: Leider war ich sehr enttäuscht, weil...',
+        'Forderung: Ich bitte Sie, ... / Ich erwarte...',
+        'Schluss: Mit freundlichen Grüßen',
+        'Mindestens 80 Wörter; Ton: höflich aber bestimmt',
+      ],
+      template:'Sehr geehrte Damen und Herren,\n\nam [Datum] habe ich Ihr Restaurant in [Stadt] besucht. Leider war ich sehr enttäuscht.\n\nErstens... Außerdem...\n\nIch bitte Sie daher, ...\n\nMit freundlichen Grüßen,\n[Name]'
+    }
+  },
+  {
+    id:'s4', type:'schreiben', title:'Schreiben: Einladung', icon:'🎉', desc:'A2–B1: Eine Einladung schreiben',
+    badge:'A2–B1', badgeColor:'#fef3c7',
+    content: {
+      kind:'schreiben',
+      prompt:'Ihr Freund / Ihre Freundin hat Geburtstag. Schreiben Sie eine Einladung zur Geburtstagsparty:\n• Wann und wo findet die Party statt?\n• Was soll die Person mitbringen?\n• Bitte um Rückmeldung',
+      tips:[
+        'Beginnen Sie locker: Liebe/r [Name],',
+        'Einladung aussprechen: Ich möchte dich herzlich einladen...',
+        'Details: Die Party findet am... um... in/bei... statt.',
+        'Bitte: Bitte bring... mit / Bitte gib mir bis... Bescheid.',
+        'Schluss: Ich freue mich auf dich! / Liebe Grüße',
+        'Ca. 60-80 Wörter',
+      ],
+      template:'Liebe/r [Name],\n\nich möchte dich herzlich zu meiner Geburtstagsparty einladen!\n\nDie Party findet am [Datum] um [Uhrzeit] bei mir zu Hause / in [Ort] statt.\n\nBitte bring... mit. \n\nMelde dich bis [Datum] bei mir, ob du kommen kannst.\n\nIch freue mich auf dich!\nLiebe Grüße,\n[Dein Name]'
+    }
+  },
+  {
+    id:'s5', type:'schreiben', title:'Schreiben: Kommentar zu Statistik', icon:'📊', desc:'B1: Statistik beschreiben und kommentieren',
+    badge:'B1', badgeColor:'#fef3c7',
+    content: {
+      kind:'schreiben',
+      prompt:'Beschreiben Sie diese Statistik und schreiben Sie Ihre Meinung dazu:\n\n📊 Statistik: "Wie reisen Deutsche in den Urlaub?" (2024)\n• Flugzeug: 42%\n• Auto: 35%\n• Zug: 15%\n• Bus: 8%\n\nSchreiben Sie: Was zeigt die Statistik? Sind Sie überrascht? Was meinen Sie dazu?',
+      tips:[
+        'Statistik beschreiben: Laut der Statistik... / Die Grafik zeigt...',
+        'Zahlen ausdrücken: Fast die Hälfte (42%) reist mit dem Flugzeug.',
+        'Vergleichen: Im Vergleich dazu... / Dagegen...',
+        'Meinung: Ich finde das... weil... / Überraschend ist, dass...',
+        'Schluss: Meiner Meinung nach sollten...',
+        'Ca. 80-100 Wörter',
+      ],
+      template:'Laut der Statistik reisen die meisten Deutschen...\n\nBesonders auffällig ist, dass...\n\nIm Vergleich dazu...\n\nIch bin [nicht] überrascht, weil...\n\nMeiner Meinung nach...'
+    }
+  },
+
+  // ══════════════════════════════════════════
+  // SPRECHEN (дополнительные)
+  // ══════════════════════════════════════════
+  {
+    id:'sp4', type:'sprechen', title:'Sprechen 4 — Über Vorteile/Nachteile', icon:'⚖️', desc:'B1: Thema diskutieren — Pro und Contra',
+    badge:'B1', badgeColor:'#fde8ea',
+    content: {
+      kind:'sprechen',
+      prompt:'Thema: "Sollen Handys in der Schule verboten werden?"\n\nBereiten Sie 2 Minuten vor, dann sprechen Sie 2-3 Minuten. Nennen Sie Vor- und Nachteile.',
+      tips:[
+        '✅ Pro (Vorteile eines Verbots): "Einerseits könnten Schüler besser aufpassen..."',
+        '❌ Kontra (Nachteile): "Andererseits brauchen Schüler Handys manchmal für..."',
+        '📊 Eigene Meinung: "Meiner Meinung nach... weil..."',
+        '🔁 Einräumung: "Zwar ist es wahr, dass... aber trotzdem..."',
+        '🎯 Schluss: "Alles in allem denke ich, dass..."',
+        '🗣️ Nützliche Phrasen: "Ich bin der Meinung, dass... / Das hat den Vorteil, dass... / Allerdings muss man auch bedenken..."',
+      ]
+    }
+  },
+  {
+    id:'sp5', type:'sprechen', title:'Sprechen 5 — Am Telefon', icon:'📱', desc:'A2–B1: Telefongespräch üben',
+    badge:'A2–B1', badgeColor:'#fde8ea',
+    content: {
+      kind:'sprechen',
+      prompt:'Rollenspiel: Sie rufen bei einem Hotel an, um ein Zimmer zu buchen.\n\nSie wollen wissen:\n• Zimmer für 2 Personen, 3 Nächte (15.–18. Juli)\n• Preis pro Nacht\n• Ob Frühstück inklusive ist\n• Parkmöglichkeiten\n\nSprechen Sie die Anfragen und mögliche Antworten laut durch.',
+      tips:[
+        '📞 Anfang: "Guten Tag, ich würde gerne ein Zimmer reservieren."',
+        '🛏️ Zimmer: "Ich brauche ein Doppelzimmer für drei Nächte vom 15. bis 18. Juli."',
+        '💰 Preis: "Was kostet das Zimmer pro Nacht?" / "Ist das Frühstück inklusive?"',
+        '🚗 Parken: "Haben Sie auch Parkmöglichkeiten für Gäste?"',
+        '✅ Bestätigung: "Gut, dann buche ich das Zimmer. Können Sie mir eine Bestätigung schicken?"',
+        '🎯 Mögliche Antworten vorbereiten: Ja/Nein/Leider nicht/Natürlich...',
+      ]
+    }
+  },
+  {
+    id:'sp6', type:'sprechen', title:'Sprechen 6 — Über sich erzählen (A2)', icon:'🙋', desc:'A2: Detailliert über sich berichten',
+    badge:'A2', badgeColor:'#fde8ea',
+    content: {
+      kind:'sprechen',
+      prompt:'Erzählen Sie ausführlich über Ihren Alltag (ca. 3 Minuten):\n\n• Wie sieht Ihr Morgen aus?\n• Was machen Sie beruflich / in der Schule?\n• Was machen Sie in der Freizeit?\n• Wie war Ihr letztes Wochenende?',
+      tips:[
+        '⏰ Morgen: "Ich stehe normalerweise um... Uhr auf. Dann..."',
+        '💼 Beruf: "Ich arbeite als... / Ich lerne Deutsch, weil..."',
+        '🎨 Freizeit: "In meiner Freizeit treffe ich gern... / Ich interessiere mich für..."',
+        '📅 Vergangenheit (Perfekt): "Am Wochenende habe ich... / bin ich..."',
+        '🔗 Verbinden: "Danach... / Zuerst... / Dann... / Schließlich..."',
+        '⭐ Meinungen: "Das finde ich toll/interessant/anstrengend, weil..."',
+      ]
+    }
+  },
+];
+
+// ============================================================
+// STATE
+// ============================================================
+let state = JSON.parse(localStorage.getItem('telcState') || 'null') || {
+  xp: 0,
+  wordsLearned: [],
+  exDone: [],
+  milestones: {},
+};
+function saveState() { localStorage.setItem('telcState', JSON.stringify(state)); }
+
+// ============================================================
+// NAV
+// ============================================================
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  const btns = document.querySelectorAll('.nav-btn');
+  btns.forEach(b => { if (b.textContent.includes({home:'Главная',program:'Программа',vocab:'Слова',exercises:'Упражнения'}[id])) b.classList.add('active'); });
+  if (id === 'home') updateHome();
+  if (id === 'vocab') renderVocab();
+  if (id === 'exercises') renderExercises();
+  if (id === 'program') renderProgram();
+}
+
+// ============================================================
+// HOME
+// ============================================================
+let wotdIdx = Math.floor(Math.random() * VOCAB.length);
+function loadWotd() {
+  wotdIdx = (wotdIdx + 1) % VOCAB.length;
+  const v = VOCAB[wotdIdx];
+  document.getElementById('wotdEmoji').textContent = v.emoji;
+  document.getElementById('wotdWord').textContent = v.base;
+  document.getElementById('wotdArticle').textContent = v.article ? 'Артикль: ' + v.article + ' · ' + v.level + ' · ' + v.theme : v.level + ' · ' + v.theme;
+  document.getElementById('wotdTrans').textContent = '🇷🇺 ' + v.trans;
+  document.getElementById('wotdSentence').textContent = '📝 ' + v.sentence;
+}
+
+function updateHome() {
+  const total = STAGES.reduce((s,st) => s + st.milestones.length, 0);
+  const done = Object.values(state.milestones).filter(Boolean).length;
+  const pct = Math.round((done/total)*100);
+  document.getElementById('overallBar').style.width = pct + '%';
+  document.getElementById('overallPct').textContent = pct + '%';
+  document.getElementById('sWordsLearned').textContent = state.wordsLearned.length;
+  document.getElementById('sExDone').textContent = state.exDone.length;
+  document.getElementById('sMilestones').textContent = done;
+  document.getElementById('sXP').textContent = state.xp;
+  document.getElementById('xpBadge').textContent = '⭐ ' + state.xp + ' XP';
+  document.getElementById('homeVocabCount').textContent = VOCAB.length;
+  document.getElementById('homeExCount').textContent = EXERCISES.length;
+  loadWotd();
+}
+
+// ============================================================
+// PROGRAM
+// ============================================================
+function renderProgram() {
+  const c = document.getElementById('stagesContainer');
+  c.innerHTML = '';
+  STAGES.forEach(st => {
+    const totalM = st.milestones.length;
+    const doneM = st.milestones.filter((_, i) => state.milestones[st.id+'_'+i]).length;
+    const pct = Math.round((doneM/totalM)*100);
+    const div = document.createElement('div');
+    div.className = 'stage ' + st.cls;
+    div.innerHTML = `
+      <div class="stage-header" onclick="toggleStage('${st.id}')">
+        <div class="badge">${st.label}</div>
+        <div class="stage-info">
+          <h3>${st.title}</h3>
+          <p>${st.desc} · ${doneM}/${totalM} тем</p>
+          <div class="stage-progress-bar"><div class="stage-progress-fill" style="width:${pct}%"></div></div>
+        </div>
+        <div style="font-size:1.2rem; color:rgba(255,255,255,0.7);">▾</div>
+      </div>
+      <div class="stage-content" id="stage-${st.id}">
+        <ul class="milestone-list">${st.milestones.map((m,i) => {
+          const key = st.id+'_'+i;
+          const done = state.milestones[key];
+          return `<li>
+            <div class="check ${done?'done':''}" onclick="toggleMilestone('${key}', this)">${done?'✓':''}</div>
+            <span>${m}</span>
+          </li>`;
+        }).join('')}</ul>
+      </div>`;
+    c.appendChild(div);
+  });
+}
+
+function toggleStage(id) {
+  const el = document.getElementById('stage-'+id);
+  el.classList.toggle('open');
+}
+
+function toggleMilestone(key, el) {
+  state.milestones[key] = !state.milestones[key];
+  if (state.milestones[key]) { el.classList.add('done'); el.textContent = '✓'; addXP(10); showToast('✓ Отмечено! +10 XP'); }
+  else { el.classList.remove('done'); el.textContent = ''; }
+  saveState();
+  updateHome();
+}
+
+// ============================================================
+// VOCAB
+// ============================================================
+const themes = [...new Set(VOCAB.map(v => v.theme))];
+let filteredVocab = [...VOCAB];
+let currentCardIdx = 0;
+let vocabMode = 'flash';
+
+function renderVocab() {
+  // populate theme select
+  const sel = document.getElementById('vocabTheme');
+  sel.innerHTML = '<option value="all">Все темы</option>' + themes.map(t => `<option value="${t}">${t}</option>`).join('');
+  // tabs
+  const tabs = document.getElementById('vocabTabs');
+  tabs.innerHTML = ['all','A1','A2','B1'].map((l,i) => `<div class="vtab ${i===0?'active':''}" onclick="setLevel('${l}', this)">${l==='all'?'Все':l}</div>`).join('');
+  filterVocab();
+}
+
+function setLevel(level, el) {
+  document.querySelectorAll('#vocabTabs .vtab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('vocabLevel').value = level;
+  filterVocab();
+}
+
+function filterVocab() {
+  const search = document.getElementById('vocabSearch').value.toLowerCase();
+  const level = document.getElementById('vocabLevel').value;
+  const theme = document.getElementById('vocabTheme').value;
+  filteredVocab = VOCAB.filter(v => {
+    if (level !== 'all' && v.level !== level) return false;
+    if (theme !== 'all' && v.theme !== theme) return false;
+    if (search && !v.word.toLowerCase().includes(search) && !v.trans.toLowerCase().includes(search)) return false;
+    return true;
+  });
+  currentCardIdx = 0;
+  if (vocabMode === 'flash') updateFlashcard();
+  else renderGrid();
+}
+
+function setVocabMode(mode) {
+  vocabMode = mode;
+  document.getElementById('vocabFlash').style.display = mode === 'flash' ? 'block' : 'none';
+  document.getElementById('vocabGrid').style.display = mode === 'grid' ? 'block' : 'none';
+  if (mode === 'flash') { filterVocab(); }
+  else { renderGrid(); }
+  showPage('vocab');
+}
+
+function updateFlashcard() {
+  if (filteredVocab.length === 0) return;
+  const v = filteredVocab[currentCardIdx];
+  document.getElementById('fcEmoji').textContent = v.emoji;
+  document.getElementById('fcArticle').textContent = v.article ? v.article + ' — ' + v.level : v.level;
+  document.getElementById('fcWord').textContent = v.article ? v.base : v.base;
+  document.getElementById('fcType').textContent = v.article ? 'существительное' : 'глагол/прилагательное/союз';
+  document.getElementById('fcTrans').textContent = v.trans;
+  document.getElementById('fcAssoc').textContent = v.assoc;
+  document.getElementById('fcSentence').textContent = v.sentence;
+  document.getElementById('cardCounter').textContent = (currentCardIdx+1) + ' / ' + filteredVocab.length;
+  const fc = document.getElementById('flashcard');
+  fc.classList.remove('flipped');
+}
+
+function flipCard() { document.getElementById('flashcard').classList.toggle('flipped'); }
+function nextCard() { if (filteredVocab.length === 0) return; currentCardIdx = (currentCardIdx+1) % filteredVocab.length; updateFlashcard(); }
+function prevCard() { if (filteredVocab.length === 0) return; currentCardIdx = (currentCardIdx-1+filteredVocab.length) % filteredVocab.length; updateFlashcard(); }
+
+function markCard(know) {
+  const v = filteredVocab[currentCardIdx];
+  if (know && !state.wordsLearned.includes(v.id)) {
+    state.wordsLearned.push(v.id);
+    addXP(5);
+    showToast('✓ Слово запомнено! +5 XP');
+    saveState();
+    updateHome();
+  }
+  nextCard();
+}
+
+function renderGrid() {
+  const c = document.getElementById('vocabGridContainer');
+  c.innerHTML = filteredVocab.map(v => `
+    <div class="vocab-item ${state.wordsLearned.includes(v.id)?'learned':''}" onclick="showWordDetail(${v.id})">
+      <div class="vi-emoji">${v.emoji}</div>
+      <div class="vi-word">${v.article ? '<span style="color:var(--blue);font-size:0.85rem;">'+v.article+'</span> ' : ''}${v.base}</div>
+      <div class="vi-trans">${v.trans}</div>
+      <div style="margin-top:6px;"><span class="tag tag-${v.level.toLowerCase()}">${v.level}</span></div>
+    </div>`).join('');
+}
+
+let currentWordId = null;
+function showWordDetail(id) {
+  currentWordId = id;
+  const v = VOCAB.find(x => x.id === id);
+  const learned = state.wordsLearned.includes(id);
+  document.getElementById('wordModalBody').innerHTML = `
+    <div class="word-modal-emoji">${v.emoji}</div>
+    <div class="word-modal-word">${v.base}</div>
+    <div class="word-modal-article">${v.article ? 'Артикль: <strong style="color:var(--blue)">${v.article}</strong>' : ''} <span class="tag tag-${v.level.toLowerCase()}">${v.level}</span></div>
+    <div style="margin-top:20px;">
+      <div class="word-detail-row"><span class="label">🇷🇺 Перевод:</span><span>${v.trans}</span></div>
+      <div class="word-detail-row"><span class="label">💭 Ассоциации:</span><span>${v.assoc}</span></div>
+      <div class="word-detail-row"><span class="label">📝 Предложение:</span><span><em>${v.sentence}</em></span></div>
+      <div class="word-detail-row"><span class="label">🏷️ Тема:</span><span>${v.theme}</span></div>
+      ${learned ? '<div style="color:var(--green); font-weight:700; text-align:center; margin-top:12px;">✓ Слово уже изучено!</div>' : ''}
+    </div>`;
+  document.getElementById('wordModal').classList.add('open');
+}
+function markWordLearned() {
+  if (currentWordId && !state.wordsLearned.includes(currentWordId)) {
+    state.wordsLearned.push(currentWordId);
+    addXP(5); saveState(); updateHome(); showToast('✓ Слово запомнено! +5 XP');
+  }
+  closeWordModal();
+  if (vocabMode === 'grid') renderGrid();
+}
+function closeWordModal() { document.getElementById('wordModal').classList.remove('open'); }
+
+// ============================================================
+// EXERCISES
+// ============================================================
+function renderExercises() {
+  const grid = document.getElementById('exerciseGrid');
+  const active = document.querySelector('#exTabs .vtab.active')?.textContent.trim() || 'Все';
+  const typeMap = {lesen:'📖 Чтение', hoeren:'🎧 Аудирование', schreiben:'✍️ Письмо', sprechen:'🗣️ Говорение', grammatik:'🔧 Грамматика'};
+  const filtered = currentExFilter === 'all' ? EXERCISES : EXERCISES.filter(e => e.type === currentExFilter);
+  grid.innerHTML = filtered.map(ex => {
+    const done = state.exDone.includes(ex.id);
+    return `<div class="ex-card ${ex.type}" onclick="openExercise('${ex.id}')">
+      <div class="ex-icon">${ex.icon} ${done ? '✅' : ''}</div>
+      <h3>${ex.title}</h3>
+      <p>${ex.desc}</p>
+      <span class="ex-badge" style="background:${ex.badgeColor}">${ex.badge}</span>
+    </div>`;
+  }).join('');
+}
+
+let currentExFilter = 'all';
+function filterEx(type, el) {
+  currentExFilter = type;
+  document.querySelectorAll('#exTabs .vtab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderExercises();
+}
+
+function openExercise(id) {
+  const ex = EXERCISES.find(e => e.id === id);
+  document.getElementById('modalTitle').textContent = ex.icon + ' ' + ex.title;
+  const body = document.getElementById('modalBody');
+  const footer = document.getElementById('modalFooter');
+
+  if (ex.content.kind === 'mc') {
+    body.innerHTML = buildMC(ex);
+    footer.innerHTML = `<button class="btn btn-primary" onclick="checkMC('${id}')">Проверить</button><button class="btn btn-outline" onclick="closeModal()">Закрыть</button>`;
+  } else if (ex.content.kind === 'hoeren') {
+    body.innerHTML = buildHoeren(ex);
+    footer.innerHTML = `<button class="btn btn-primary" onclick="checkMC('${id}')">Проверить</button><button class="btn btn-outline" onclick="closeModal()">Закрыть</button>`;
+  } else if (ex.content.kind === 'schreiben') {
+    body.innerHTML = buildSchreiben(ex);
+    footer.innerHTML = `<button class="btn btn-gold" onclick="checkSchreiben('${id}')">✓ Отметить как выполненное</button><button class="btn btn-outline" onclick="closeModal()">Закрыть</button>`;
+  } else if (ex.content.kind === 'sprechen') {
+    body.innerHTML = buildSprechen(ex);
+    footer.innerHTML = `<button class="btn btn-gold" onclick="checkSprechen('${id}')">✓ Отметить как выполненное</button><button class="btn btn-outline" onclick="closeModal()">Закрыть</button>`;
+  } else if (ex.content.kind === 'fill') {
+    body.innerHTML = buildFill(ex);
+    footer.innerHTML = `<button class="btn btn-primary" onclick="checkFill('${id}')">Проверить</button><button class="btn btn-outline" onclick="closeModal()">Закрыть</button>`;
+  }
+  document.getElementById('exModal').classList.add('open');
+}
+
+function buildMC(ex) {
+  const text = ex.content.text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+  const cls = ex.content.kind === 'hoeren' ? 'audio-script' : 'reading-text';
+  return `<div class="${cls}">${cls === 'audio-script' ? buildScript(ex.content.script||[]) : text}</div>` +
+    ex.content.questions.map((q,qi) => `
+      <div class="question-block" id="qb${qi}">
+        <p>${qi+1}. ${q.q}</p>
+        <div class="options">${q.opts.map((o,oi) => `<div class="option" onclick="selectOpt(this,${qi},${oi})" data-idx="${oi}">${o}</div>`).join('')}</div>
+        <div class="feedback" id="fb${qi}"></div>
+      </div>`).join('');
+}
+function buildScript(script) {
+  return script.map(s => `<div style="margin-bottom:6px;"><span class="speaker">${s.speaker}:</span> ${s.text}</div>`).join('');
+}
+function buildHoeren(ex) {
+  const scriptHtml = buildScript(ex.content.script);
+  return `<div class="audio-script"><div style="font-weight:700; margin-bottom:10px; color:var(--green);">🎧 Диалог / Текст (в реальном экзамене — аудио)</div>${scriptHtml}</div>` +
+    ex.content.questions.map((q,qi) => `
+      <div class="question-block" id="qb${qi}">
+        <p>${qi+1}. ${q.q}</p>
+        <div class="options">${q.opts.map((o,oi) => `<div class="option" onclick="selectOpt(this,${qi},${oi})" data-idx="${oi}">${o}</div>`).join('')}</div>
+        <div class="feedback" id="fb${qi}"></div>
+      </div>`).join('');
+}
+
+let selectedOpts = {};
+function selectOpt(el, qi, oi) {
+  selectedOpts[qi] = oi;
+  el.closest('.options').querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function checkMC(exId) {
+  const ex = EXERCISES.find(e => e.id === exId);
+  let score = 0;
+  ex.content.questions.forEach((q,qi) => {
+    const sel = selectedOpts[qi];
+    const opts = document.querySelectorAll(`#qb${qi} .option`);
+    const fb = document.getElementById('fb'+qi);
+    opts.forEach(o => { o.classList.remove('correct','wrong'); });
+    if (sel === undefined) { fb.textContent = '⚠️ Выберите ответ!'; fb.className = 'feedback show fail'; return; }
+    if (sel === q.ans) { opts[sel].classList.add('correct'); fb.textContent = '✓ Правильно!'; fb.className = 'feedback show ok'; score++; }
+    else { opts[sel].classList.add('wrong'); opts[q.ans].classList.add('correct'); fb.textContent = `✗ Правильный ответ: "${q.opts[q.ans]}"`; fb.className = 'feedback show fail'; }
+  });
+  selectedOpts = {};
+  if (score === ex.content.questions.length) {
+    if (!state.exDone.includes(exId)) { state.exDone.push(exId); addXP(20); saveState(); updateHome(); }
+    showToast(`🎉 Все верно! +20 XP`);
+  } else {
+    addXP(5); saveState();
+    showToast(`${score}/${ex.content.questions.length} правильно. +5 XP`);
+  }
+  renderExercises();
+}
+
+function buildSchreiben(ex) {
+  const prompt = ex.content.prompt.replace(/\n/g,'<br>');
+  return `<div class="writing-prompt"><strong>📋 Задание:</strong><br><br>${prompt}</div>
+    <textarea class="writing-area" id="writingText" placeholder="Напишите ваш текст здесь..." oninput="updateWordCount()">${ex.content.template||''}</textarea>
+    <div class="word-count" id="wordCount">Слов: 0</div>
+    <div class="writing-tips" style="margin-top:12px;"><strong>💡 Советы:</strong><ul>${ex.content.tips.map(t=>`<li>${t}</li>`).join('')}</ul></div>`;
+}
+function updateWordCount() {
+  const txt = document.getElementById('writingText')?.value || '';
+  document.getElementById('wordCount').textContent = 'Слов: ' + txt.trim().split(/\s+/).filter(Boolean).length;
+}
+function checkSchreiben(exId) {
+  if (!state.exDone.includes(exId)) { state.exDone.push(exId); addXP(25); saveState(); updateHome(); }
+  showToast('✓ Письмо отмечено! +25 XP'); closeModal(); renderExercises();
+}
+
+function buildSprechen(ex) {
+  const prompt = ex.content.prompt.replace(/\n/g,'<br>');
+  return `<div class="speaking-prompt"><strong>🗣️ Задание:</strong><br><br>${prompt}</div>
+    <div class="speaking-tips">${ex.content.tips.map(t=>`<div class="speaking-tip">${t}</div>`).join('')}</div>
+    <div style="margin-top:16px; padding:14px; background:#f0f7ff; border-radius:8px; font-size:0.88rem; color:var(--muted);">
+      💡 Говорите вслух! Используйте эти подсказки как опору. Запишите себя на телефон — это поможет улучшить произношение.
+    </div>`;
+}
+function checkSprechen(exId) {
+  if (!state.exDone.includes(exId)) { state.exDone.push(exId); addXP(25); saveState(); updateHome(); }
+  showToast('✓ Говорение отмечено! +25 XP'); closeModal(); renderExercises();
+}
+
+function buildFill(ex) {
+  return ex.content.sentences.map((s,i) => `
+    <div class="question-block" id="fqb${i}">
+      <p style="font-size:1rem; margin-bottom:6px;">${s.text.replace('___', `<strong>[___]</strong>`)}</p>
+      <p style="font-size:0.82rem; color:var(--muted); margin-bottom:6px;">💡 Подсказка: ${s.hint}</p>
+      <input class="fill-input" id="fill${i}" placeholder="Ваш ответ...">
+      <div class="feedback" id="ffb${i}"></div>
+    </div>`).join('');
+}
+function checkFill(exId) {
+  const ex = EXERCISES.find(e => e.id === exId);
+  let score = 0;
+  ex.content.sentences.forEach((s,i) => {
+    const inp = document.getElementById('fill'+i);
+    const fb = document.getElementById('ffb'+i);
+    const val = inp.value.trim().toLowerCase();
+    const correct = s.ans.toLowerCase();
+    if (val === correct) { inp.classList.add('correct'); inp.classList.remove('wrong'); fb.textContent = '✓ Richtig!'; fb.className = 'feedback show ok'; score++; }
+    else { inp.classList.add('wrong'); inp.classList.remove('correct'); fb.textContent = `✗ Правильный ответ: "${s.ans}"`; fb.className = 'feedback show fail'; }
+  });
+  if (score === ex.content.sentences.length) {
+    if (!state.exDone.includes(exId)) { state.exDone.push(exId); addXP(20); saveState(); updateHome(); }
+    showToast(`🎉 Все верно! +20 XP`);
+  } else { addXP(5); saveState(); showToast(`${score}/${ex.content.sentences.length} правильно. +5 XP`); }
+  renderExercises();
+}
+
+function closeModal() {
+  document.getElementById('exModal').classList.remove('open');
+  selectedOpts = {};
+}
+
+// ============================================================
+// UTILS
+// ============================================================
+function addXP(n) {
+  state.xp += n;
+  document.getElementById('xpBadge').textContent = '⭐ ' + state.xp + ' XP';
+}
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ============================================================
+// TRAINER — SPACED REPETITION ENGINE
+// ============================================================
+
+// wordStats[id] = { correct:0, incorrect:0, streak:0, status:'new'|'learning'|'known' }
+// status 'known' = officially learned (streak >= 3 correct in a row)
+
+function getWordStats(id) {
+  if (!state.wordStats) state.wordStats = {};
+  if (!state.wordStats[id]) state.wordStats[id] = { correct:0, incorrect:0, streak:0, status: state.wordsLearned.includes(id) ? 'known' : 'new' };
+  return state.wordStats[id];
+}
+
+// ── Setup screen ──
+function updateTrainerSetup() {
+  const levels = getCheckedLevels();
+  const pool = VOCAB.filter(v => levels.includes(v.level));
+  const learned = pool.filter(v => getWordStats(v.id).status === 'known').length;
+  document.getElementById('trSetupTotal').textContent = pool.length;
+  document.getElementById('trSetupLearned').textContent = learned;
+  document.getElementById('trSetupRemaining').textContent = pool.length - learned;
+  document.getElementById('trLearnedCount').textContent = learned;
+}
+
+function getCheckedLevels() {
+  return Array.from(document.querySelectorAll('#trLevelFilter input:checked')).map(cb => cb.value);
+}
+
+function toggleLearnedList() {
+  const el = document.getElementById('trLearnedList');
+  if (el.style.display === 'none') {
+    el.style.display = 'block';
+    renderLearnedGrid();
+  } else {
+    el.style.display = 'none';
+  }
+}
+
+function renderLearnedGrid() {
+  const levels = getCheckedLevels();
+  const learned = VOCAB.filter(v => levels.includes(v.level) && getWordStats(v.id).status === 'known');
+  document.getElementById('trLearnedGrid').innerHTML = learned.length === 0
+    ? '<p style="color:var(--muted);font-size:0.9rem;">Пока нет изученных слов в выбранных уровнях.</p>'
+    : learned.map(v => `<div class="vocab-item learned" onclick="showWordDetail(${v.id})">
+        <div class="vi-emoji">${v.emoji}</div>
+        <div class="vi-word">${v.article ? '<span style="color:var(--blue);font-size:0.8rem;">'+v.article+'</span> ' : ''}${v.base}</div>
+        <div class="vi-trans">${v.trans}</div>
+        <div style="margin-top:4px;"><span class="tag tag-${v.level.toLowerCase()}">${v.level}</span></div>
+      </div>`).join('');
+}
+
+// ── Session state ──
+let trSession = {
+  queue: [],           // ordered list of {word, type} to show
+  current: 0,
+  revealed: false,
+  results: { correct:0, incorrect:0, newlyLearned:[] },
+  wrongWords: [],
+  mode: 'smart',
+};
+
+const EX_TYPES = ['flashcard', 'mc_dr', 'mc_rd', 'sentence'];
+
+function buildQueue(pool, mode, count) {
+  // Sort by priority: unknown first (many incorrect), then learning, then new
+  const prioritized = pool.slice().sort((a, b) => {
+    const sa = getWordStats(a.id), sb = getWordStats(b.id);
+    if (sa.status === 'known' && sb.status !== 'known') return 1;
+    if (sb.status === 'known' && sa.status !== 'known') return -1;
+    const scoreA = sa.incorrect * 2 - sa.correct + (sa.status === 'new' ? 0.5 : 0);
+    const scoreB = sb.incorrect * 2 - sb.correct + (sb.status === 'new' ? 0.5 : 0);
+    return scoreB - scoreA;
+  });
+
+  let selected;
+  if (mode === 'unknown') {
+    selected = prioritized.filter(v => getWordStats(v.id).status !== 'known');
+  } else if (mode === 'all') {
+    selected = prioritized;
+  } else { // smart
+    // Take all non-known, but put low-streak words higher
+    selected = prioritized.filter(v => getWordStats(v.id).status !== 'known');
+    if (selected.length === 0) selected = prioritized; // all learned → review all
+  }
+
+  if (count !== 'all') selected = selected.slice(0, parseInt(count));
+
+  // Build queue with varied exercise types
+  // Unknown words get 2 slots (different types), learning words get 1
+  const queue = [];
+  selected.forEach((word, i) => {
+    const st = getWordStats(word.id);
+    const type1 = EX_TYPES[i % EX_TYPES.length];
+    queue.push({ word, type: type1 });
+    if (mode === 'smart' && (st.status === 'new' || st.incorrect > st.correct)) {
+      const type2 = EX_TYPES[(i + 2) % EX_TYPES.length];
+      if (type2 !== type1) queue.push({ word, type: type2 });
+    }
+  });
+
+  // Shuffle lightly (keep different types for same word separated)
+  return shuffleSoft(queue);
+}
+
+function shuffleSoft(arr) {
+  // Fisher-Yates shuffle but ensure same word doesn't appear back-to-back
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  // Fix back-to-back same words
+  for (let i = 1; i < a.length; i++) {
+    if (a[i].word.id === a[i-1].word.id) {
+      for (let j = i+1; j < a.length; j++) {
+        if (a[j].word.id !== a[i-1].word.id) {
+          [a[i], a[j]] = [a[j], a[i]];
+          break;
+        }
+      }
+    }
+  }
+  return a;
+}
+
+function startTrainer() {
+  const levels = getCheckedLevels();
+  if (levels.length === 0) { showToast('Выберите хотя бы один уровень!'); return; }
+  const mode = document.querySelector('input[name="trMode"]:checked').value;
+  const count = document.querySelector('input[name="trCount"]:checked').value;
+  const pool = VOCAB.filter(v => levels.includes(v.level));
+
+  trSession = {
+    queue: buildQueue(pool, mode, count),
+    current: 0,
+    revealed: false,
+    results: { correct:0, incorrect:0, newlyLearned:[] },
+    wrongWords: [],
+    mode,
+  };
+
+  if (trSession.queue.length === 0) {
+    showToast('Нет слов для тренировки в выбранных уровнях!');
+    return;
+  }
+
+  document.getElementById('trainerSetup').style.display = 'none';
+  document.getElementById('trainerResults').style.display = 'none';
+  document.getElementById('trainerSession').style.display = 'block';
+
+  renderCurrentCard();
+}
+
+function renderCurrentCard() {
+  if (trSession.current >= trSession.queue.length) {
+    showResults();
+    return;
+  }
+
+  const { word, type } = trSession.queue[trSession.current];
+  const stats = getWordStats(word.id);
+  trSession.revealed = false;
+
+  // Update progress
+  const total = trSession.queue.length;
+  const pct = Math.round((trSession.current / total) * 100);
+  document.getElementById('trSessionBar').style.width = pct + '%';
+  document.getElementById('trSessionPct').textContent = pct + '%';
+  document.getElementById('trSessionLabel').textContent = `Карточка ${trSession.current + 1} из ${total}`;
+
+  // Count stats
+  const pool = VOCAB.filter(v => getCheckedLevels().includes(v.level));
+  let cntUnknown = 0, cntLearning = 0, cntKnown = 0;
+  pool.forEach(v => {
+    const s = getWordStats(v.id).status;
+    if (s === 'known') cntKnown++;
+    else if (s === 'learning') cntLearning++;
+    else cntUnknown++;
+  });
+  document.getElementById('trCountUnknown').textContent = cntUnknown;
+  document.getElementById('trCountLearning').textContent = cntLearning;
+  document.getElementById('trCountKnown').textContent = cntKnown;
+
+  // Streak badge
+  const streakBadge = document.getElementById('trStreakBadge');
+  if (stats.streak > 0) {
+    streakBadge.textContent = '🔥 ' + stats.streak + ' подряд';
+    streakBadge.style.display = '';
+  } else if (stats.incorrect > 0 && stats.correct === 0) {
+    streakBadge.textContent = '⚠️ Было сложно';
+    streakBadge.style.display = '';
+  } else {
+    streakBadge.style.display = 'none';
+  }
+
+  // Level + theme
+  document.getElementById('trWordLevel').textContent = word.level;
+  document.getElementById('trWordTheme').textContent = word.theme;
+
+  // Hide all exercise types
+  document.getElementById('trExFlashcard').style.display = 'none';
+  document.getElementById('trExMCDR').style.display = 'none';
+  document.getElementById('trExMCRD').style.display = 'none';
+  document.getElementById('trExSentence').style.display = 'none';
+  document.getElementById('trActionBtns').style.display = 'none';
+  document.getElementById('trMCNext').style.display = 'none';
+
+  if (type === 'flashcard') {
+    renderFlashcard(word);
+  } else if (type === 'mc_dr') {
+    renderMCDR(word);
+  } else if (type === 'mc_rd') {
+    renderMCRD(word);
+  } else if (type === 'sentence') {
+    renderSentenceEx(word);
+  }
+}
+
+// ── Flashcard exercise ──
+function renderFlashcard(word) {
+  document.getElementById('trTypeName').textContent = '🃏 Карточка — DE → RU';
+  document.getElementById('trExFlashcard').style.display = 'block';
+  document.getElementById('trFlashEmoji').textContent = word.emoji;
+  document.getElementById('trFlashArticle').textContent = word.article ? word.article : '';
+  document.getElementById('trFlashWord').textContent = word.base;
+  document.getElementById('trFlashAssoc').textContent = word.assoc;
+  document.getElementById('trFlashTrans').textContent = word.trans;
+  document.getElementById('trFlashSentence').textContent = word.sentence;
+  document.getElementById('trFlashAnswer').style.display = 'none';
+  document.getElementById('trFlashRevealBtn').style.display = 'inline-block';
+  document.getElementById('trActionBtns').style.display = 'none';
+}
+
+function revealFlash() {
+  document.getElementById('trFlashAnswer').style.display = 'block';
+  document.getElementById('trFlashRevealBtn').style.display = 'none';
+  document.getElementById('trActionBtns').style.display = 'flex';
+  document.getElementById('trActionBtns').style.flexDirection = 'column';
+  trSession.revealed = true;
+}
+
+// ── MC DE→RU exercise ──
+function renderMCDR(word) {
+  document.getElementById('trTypeName').textContent = '🇩🇪→🇷🇺 Выбери перевод';
+  document.getElementById('trExMCDR').style.display = 'block';
+  document.getElementById('trMCDREmoji').textContent = word.emoji;
+  document.getElementById('trMCDRArticle').textContent = word.article ? word.article : '';
+  document.getElementById('trMCDRWord').textContent = word.base;
+
+  const opts = getMCOptions(word, 'trans');
+  const container = document.getElementById('trMCDROptions');
+  container.innerHTML = opts.map((opt, i) =>
+    `<div class="tr-opt" onclick="checkMCAnswer(this, ${opt.correct}, 'mc_dr')">
+      <span style="background:var(--border);width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;flex-shrink:0;">${'ABCD'[i]}</span>
+      <span>${opt.text}</span>
+    </div>`
+  ).join('');
+}
+
+// ── MC RU→DE exercise ──
+function renderMCRD(word) {
+  document.getElementById('trTypeName').textContent = '🇷🇺→🇩🇪 Выбери слово';
+  document.getElementById('trExMCRD').style.display = 'block';
+  document.getElementById('trMCRDTrans').textContent = word.trans;
+
+  const opts = getMCOptions(word, 'base');
+  const container = document.getElementById('trMCRDOptions');
+  container.innerHTML = opts.map((opt, i) =>
+    `<div class="tr-opt" onclick="checkMCAnswer(this, ${opt.correct}, 'mc_rd')">
+      <span style="background:var(--border);width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;flex-shrink:0;">${'ABCD'[i]}</span>
+      <span>${opt.emoji ? opt.emoji + ' ' : ''}${opt.article ? '<span style="color:var(--blue);font-size:0.85rem;">'+opt.article+'</span> ' : ''}${opt.text}</span>
+    </div>`
+  ).join('');
+}
+
+function getMCOptions(word, field) {
+  const correct = { text: field === 'trans' ? word.trans : word.base, correct: true, emoji: word.emoji, article: word.article };
+  // Get 3 random wrong options from same level
+  const pool = VOCAB.filter(v => v.id !== word.id && v.level === word.level);
+  const shuffled = pool.sort(() => Math.random() - 0.5).slice(0, 3);
+  const wrong = shuffled.map(v => ({ text: field === 'trans' ? v.trans : v.base, correct: false, emoji: v.emoji, article: v.article }));
+  const all = [correct, ...wrong].sort(() => Math.random() - 0.5);
+  return all;
+}
+
+function checkMCAnswer(el, isCorrect, exType) {
+  // Disable all options
+  const container = el.closest('[id^="trMC"]').querySelector('[id$="Options"]') ||
+    document.getElementById(exType === 'mc_dr' ? 'trMCDROptions' : 'trMCRDOptions');
+  container.querySelectorAll('.tr-opt').forEach(opt => opt.classList.add('disabled'));
+
+  if (isCorrect) {
+    el.classList.add('correct');
+    rateWord(2, true); // auto-advance after delay
+  } else {
+    el.classList.add('wrong');
+    // Highlight correct
+    container.querySelectorAll('.tr-opt').forEach(opt => {
+      if (opt !== el) opt.classList.add('correct');
+    });
+    rateWord(0, true);
+  }
+
+  document.getElementById('trMCNext').style.display = 'block';
+}
+
+// ── Sentence exercise ──
+function renderSentenceEx(word) {
+  document.getElementById('trTypeName').textContent = '📝 Предложение — вспомни слово';
+  document.getElementById('trExSentence').style.display = 'block';
+
+  // Replace the word in the sentence with ___
+  let sentence = word.sentence;
+  const baseLC = word.base.toLowerCase();
+  // Try to find and blank out the word (case-insensitive)
+  const re = new RegExp(word.base.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+  if (re.test(sentence)) {
+    sentence = sentence.replace(re, '<strong style="background:#ffe5b4;padding:0 6px;border-radius:4px;color:transparent;border-bottom:2px solid #f4a261;">______</strong>');
+  } else {
+    sentence = sentence + ' [найди слово ниже]';
+  }
+
+  document.getElementById('trSentenceText').innerHTML = sentence;
+  document.getElementById('trSentEmoji').textContent = word.emoji;
+  document.getElementById('trSentArticle').textContent = word.article ? 'Артикль: ' + word.article : '';
+  document.getElementById('trSentWord').textContent = word.base;
+  document.getElementById('trSentTrans').textContent = word.trans;
+  document.getElementById('trSentenceAnswer').style.display = 'none';
+  document.getElementById('trSentRevealBtn').style.display = 'block';
+  document.getElementById('trActionBtns').style.display = 'none';
+}
+
+function revealSentence() {
+  document.getElementById('trSentenceAnswer').style.display = 'block';
+  document.getElementById('trSentRevealBtn').style.display = 'none';
+  document.getElementById('trActionBtns').style.display = 'flex';
+  document.getElementById('trActionBtns').style.flexDirection = 'column';
+  trSession.revealed = true;
+}
+
+// ── Rating ──
+function rateWord(rating, fromMC) {
+  const { word } = trSession.queue[trSession.current];
+  const stats = getWordStats(word.id);
+
+  if (rating === 2) { // знаю
+    stats.correct++;
+    stats.streak++;
+    trSession.results.correct++;
+    if (stats.streak >= 3 && stats.status !== 'known') {
+      stats.status = 'known';
+      if (!state.wordsLearned.includes(word.id)) state.wordsLearned.push(word.id);
+      trSession.results.newlyLearned.push(word);
+      addXP(10);
+      if (!fromMC) showToast('🎉 Слово выучено! +10 XP');
+    } else {
+      stats.status = 'learning';
+      if (!fromMC) addXP(3);
+    }
+  } else if (rating === 0) { // не знаю
+    stats.incorrect++;
+    stats.streak = 0;
+    stats.status = stats.status === 'known' ? 'learning' : 'new';
+    trSession.results.incorrect++;
+    if (!trSession.wrongWords.find(w => w.id === word.id)) trSession.wrongWords.push(word);
+    // Reinsert word later in queue (5 cards from now)
+    const insertAt = Math.min(trSession.current + 5, trSession.queue.length);
+    const newType = EX_TYPES[Math.floor(Math.random() * EX_TYPES.length)];
+    trSession.queue.splice(insertAt, 0, { word, type: newType });
+  } else { // затрудняюсь
+    stats.streak = Math.max(0, stats.streak - 1);
+    if (stats.status === 'new') stats.status = 'new'; // stays
+    // Reinsert word 3 cards later
+    const insertAt = Math.min(trSession.current + 3, trSession.queue.length);
+    trSession.queue.splice(insertAt, 0, { word, type: 'mc_dr' });
+    if (!fromMC) addXP(1);
+  }
+
+  saveState();
+  updateHome();
+
+  if (!fromMC) {
+    // Fade and advance
+    trSession.current++;
+    const card = document.getElementById('trCard');
+    card.classList.add('fading');
+    setTimeout(() => {
+      card.classList.remove('fading');
+      renderCurrentCard();
+    }, 200);
+  }
+}
+
+function trNextCard() {
+  trSession.current++;
+  const card = document.getElementById('trCard');
+  card.classList.add('fading');
+  setTimeout(() => {
+    card.classList.remove('fading');
+    renderCurrentCard();
+  }, 200);
+}
+
+// ── Results ──
+function showResults() {
+  document.getElementById('trainerSession').style.display = 'none';
+  document.getElementById('trainerResults').style.display = 'block';
+
+  const { correct, incorrect, newlyLearned } = trSession.results;
+  const total = correct + incorrect;
+  const pct = total > 0 ? Math.round((correct / total) * 100) : 0;
+
+  let emoji = '😊', sub = '';
+  if (pct >= 90) { emoji = '🏆'; sub = 'Отлично! Вы отлично знаете эти слова!'; }
+  else if (pct >= 70) { emoji = '🎉'; sub = 'Хорошая работа! Продолжайте в том же духе.'; }
+  else if (pct >= 50) { emoji = '📚'; sub = 'Неплохо! Повторите слова которые вызвали сложности.'; }
+  else { emoji = '💪'; sub = 'Практикуйтесь чаще — и слова запомнятся!'; }
+
+  document.getElementById('trResultEmoji').textContent = emoji;
+  document.getElementById('trResultSub').textContent = sub + ` (${pct}% правильно)`;
+  document.getElementById('trResKnown').textContent = correct;
+  document.getElementById('trResUnknown').textContent = incorrect;
+  document.getElementById('trResNewLearned').textContent = newlyLearned.length;
+
+  // Wrong words list
+  const reviewCard = document.getElementById('trResultReviewCard');
+  const reviewList = document.getElementById('trResultReviewList');
+  if (trSession.wrongWords.length > 0) {
+    reviewCard.style.display = 'block';
+    reviewList.innerHTML = trSession.wrongWords.map(w => `
+      <div style="display:flex;align-items:center;gap:12px;padding:10px;background:#fff9f9;border-radius:8px;border-left:3px solid var(--red);">
+        <span style="font-size:1.8rem;">${w.emoji}</span>
+        <div>
+          <div style="font-weight:700;">${w.article ? '<span style="color:var(--blue)">'+w.article+'</span> ' : ''}${w.base}</div>
+          <div style="font-size:0.85rem;color:var(--muted);">${w.trans}</div>
+          <div style="font-size:0.82rem;font-style:italic;color:var(--muted);">${w.sentence}</div>
+        </div>
+      </div>`).join('');
+  } else {
+    reviewCard.style.display = 'none';
+  }
+
+  // Newly learned words
+  const learnedCard = document.getElementById('trResultLearnedCard');
+  const learnedList = document.getElementById('trResultLearnedList');
+  if (newlyLearned.length > 0) {
+    learnedCard.style.display = 'block';
+    learnedList.innerHTML = newlyLearned.map(w =>
+      `<span class="known-pill">${w.emoji} ${w.base}</span>`
+    ).join('');
+  } else {
+    learnedCard.style.display = 'none';
+  }
+
+  updateTrainerSetup();
+}
+
+function endSession() {
+  if (!confirm('Завершить тренировку?')) return;
+  showResults();
+}
+
+function backToSetup() {
+  document.getElementById('trainerResults').style.display = 'none';
+  document.getElementById('trainerSession').style.display = 'none';
+  document.getElementById('trainerSetup').style.display = 'block';
+  updateTrainerSetup();
+}
+
+// ── Hook showPage for trainer ──
+const _origShowPage = showPage;
+showPage = function(id) {
+  _origShowPage(id);
+  if (id === 'trainer') {
+    updateTrainerSetup();
+    // Update nav active button
+    document.querySelectorAll('.nav-btn').forEach(b => {
+      if (b.textContent.includes('Тренажёр')) b.classList.add('active');
+    });
+  }
+};
+
+// ============================================================
+// INIT
+// ============================================================
+updateHome();
+renderVocab();
+renderExercises();
+</script>
+</body>
+</html>
