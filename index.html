@@ -354,8 +354,20 @@
 <div class="page" id="page-vocab">
   <div class="section-title"><span>📚</span> Словарный запас</div>
 
-  <div class="vocab-controls">
-    <input type="text" id="vocabSearch" placeholder="🔍 Поиск слова..." oninput="filterVocab()">
+  <!-- Search bar — full width, prominent -->
+  <div style="position:relative; margin-bottom:12px;">
+    <input type="text" id="vocabSearch" placeholder="🔍 Поиск: слово, перевод, тема..."
+      oninput="filterVocab()"
+      style="width:100%; padding:12px 44px 12px 14px; border:2px solid var(--border); border-radius:10px;
+             font-size:1rem; background:white; outline:none; transition:border .2s;"
+      onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--border)'">
+    <button id="vocabSearchClear" onclick="clearVocabSearch()"
+      style="display:none; position:absolute; right:12px; top:50%; transform:translateY(-50%);
+             background:none; border:none; font-size:1.2rem; cursor:pointer; color:var(--muted); line-height:1;">✕</button>
+  </div>
+
+  <!-- Filters row -->
+  <div class="vocab-controls" style="margin-bottom:8px;">
     <select id="vocabLevel" onchange="filterVocab()">
       <option value="all">Все уровни</option>
       <option value="A1">A1</option>
@@ -365,9 +377,14 @@
     <select id="vocabTheme" onchange="filterVocab()">
       <option value="all">Все темы</option>
     </select>
-    <button class="btn btn-primary" onclick="setVocabMode('flash')">🃏 Флэш-карты</button>
-    <button class="btn btn-outline" onclick="setVocabMode('grid')">⊞ Сетка</button>
+    <div style="margin-left:auto; display:flex; gap:6px;">
+      <button id="modeFlashBtn" class="btn btn-primary" onclick="setVocabMode('flash')" style="padding:8px 14px;">🃏 Карточки</button>
+      <button id="modeGridBtn" class="btn btn-outline" onclick="setVocabMode('grid')" style="padding:8px 14px;">⊞ Сетка</button>
+    </div>
   </div>
+
+  <!-- Result count -->
+  <div id="vocabResultCount" style="font-size:0.85rem; color:var(--muted); margin-bottom:12px;"></div>
 
   <div class="vocab-tabs" id="vocabTabs"></div>
 
@@ -1619,27 +1636,64 @@ function setLevel(level, el) {
 }
 
 function filterVocab() {
-  const search = document.getElementById('vocabSearch').value.toLowerCase();
+  const search = document.getElementById('vocabSearch').value.toLowerCase().trim();
   const level = document.getElementById('vocabLevel').value;
   const theme = document.getElementById('vocabTheme').value;
+
+  // Show/hide clear button
+  const clearBtn = document.getElementById('vocabSearchClear');
+  if (clearBtn) clearBtn.style.display = search ? 'block' : 'none';
+
   filteredVocab = VOCAB.filter(v => {
     if (level !== 'all' && v.level !== level) return false;
     if (theme !== 'all' && v.theme !== theme) return false;
-    if (search && !v.word.toLowerCase().includes(search) && !v.trans.toLowerCase().includes(search)) return false;
+    if (search) {
+      const hay = [v.word, v.base, v.trans, v.assoc, v.sentence, v.theme].join(' ').toLowerCase();
+      if (!hay.includes(search)) return false;
+    }
     return true;
   });
+
   currentCardIdx = 0;
+
+  // Update result count
+  const countEl = document.getElementById('vocabResultCount');
+  if (countEl) {
+    if (search || level !== 'all' || theme !== 'all') {
+      countEl.textContent = `Найдено: ${filteredVocab.length} из ${VOCAB.length} слов`;
+    } else {
+      countEl.textContent = `Всего слов: ${VOCAB.length}`;
+    }
+  }
+
+  // Auto-switch to grid when searching so results are visible
+  if (search && vocabMode === 'flash') {
+    setVocabMode('grid');
+    return; // setVocabMode calls filterVocab again via renderGrid
+  }
+
   if (vocabMode === 'flash') updateFlashcard();
   else renderGrid();
+}
+
+function clearVocabSearch() {
+  document.getElementById('vocabSearch').value = '';
+  filterVocab();
+  document.getElementById('vocabSearch').focus();
 }
 
 function setVocabMode(mode) {
   vocabMode = mode;
   document.getElementById('vocabFlash').style.display = mode === 'flash' ? 'block' : 'none';
   document.getElementById('vocabGrid').style.display = mode === 'grid' ? 'block' : 'none';
-  if (mode === 'flash') { filterVocab(); }
-  else { renderGrid(); }
-  showPage('vocab');
+  // Update button styles
+  const flashBtn = document.getElementById('modeFlashBtn');
+  const gridBtn  = document.getElementById('modeGridBtn');
+  if (flashBtn) { flashBtn.className = mode === 'flash' ? 'btn btn-primary' : 'btn btn-outline'; flashBtn.style.padding='8px 14px'; }
+  if (gridBtn)  { gridBtn.className  = mode === 'grid'  ? 'btn btn-primary' : 'btn btn-outline'; gridBtn.style.padding='8px 14px'; }
+  // Render content (no recursive filterVocab call — just render directly)
+  if (mode === 'flash') updateFlashcard();
+  else renderGrid();
 }
 
 function updateFlashcard() {
@@ -1673,14 +1727,35 @@ function markCard(know) {
   nextCard();
 }
 
+function highlight(text, query) {
+  if (!query) return text;
+  const re = new RegExp('(' + query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
+  return text.replace(re, '<mark style="background:#ffe066;border-radius:2px;padding:0 1px;">$1</mark>');
+}
+
 function renderGrid() {
   const c = document.getElementById('vocabGridContainer');
+  const q = (document.getElementById('vocabSearch').value || '').toLowerCase().trim();
+
+  if (filteredVocab.length === 0) {
+    c.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--muted);">
+      <div style="font-size:2.5rem; margin-bottom:12px;">🔍</div>
+      <div style="font-size:1rem; font-weight:600;">Ничего не найдено</div>
+      <div style="font-size:0.85rem; margin-top:6px;">Попробуйте другое слово или сбросьте фильтры</div>
+      <button class="btn btn-outline" style="margin-top:12px;" onclick="clearVocabSearch()">Сбросить поиск</button>
+    </div>`;
+    return;
+  }
+
   c.innerHTML = filteredVocab.map(v => `
     <div class="vocab-item ${state.wordsLearned.includes(v.id)?'learned':''}" onclick="showWordDetail(${v.id})">
       <div class="vi-emoji">${v.emoji}</div>
-      <div class="vi-word">${v.article ? '<span style="color:var(--blue);font-size:0.85rem;">'+v.article+'</span> ' : ''}${v.base}</div>
-      <div class="vi-trans">${v.trans}</div>
-      <div style="margin-top:6px;"><span class="tag tag-${v.level.toLowerCase()}">${v.level}</span></div>
+      <div class="vi-word">${v.article ? '<span style="color:var(--blue);font-size:0.85rem;">'+highlight(v.article,q)+'</span> ' : ''}${highlight(v.base,q)}</div>
+      <div class="vi-trans">${highlight(v.trans,q)}</div>
+      <div style="margin-top:6px; display:flex; gap:4px; justify-content:center; flex-wrap:wrap;">
+        <span class="tag tag-${v.level.toLowerCase()}">${v.level}</span>
+        <span style="font-size:0.72rem; color:var(--muted); background:#f0f2f5; padding:2px 6px; border-radius:8px;">${v.theme}</span>
+      </div>
     </div>`).join('');
 }
 
