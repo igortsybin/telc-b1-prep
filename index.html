@@ -223,9 +223,53 @@
   .word-modal-article { color: var(--blue); font-size: 1.1rem; text-align: center; margin-bottom: 16px; }
   .word-detail-row { display: flex; gap: 10px; margin-bottom: 10px; font-size: 0.92rem; }
   .word-detail-row .label { font-weight: 700; color: var(--muted); min-width: 120px; }
+
+  /* AUTH */
+  .auth-overlay { position:fixed; inset:0; background:rgba(10,10,30,0.85); z-index:1000; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px); }
+  .auth-box { background:white; border-radius:20px; padding:40px 36px; width:100%; max-width:380px; text-align:center; box-shadow:0 24px 60px rgba(0,0,0,0.3); }
+  .auth-box .flag { font-size:3rem; margin-bottom:8px; }
+  .auth-box h1 { font-size:1.5rem; font-weight:800; margin-bottom:6px; color:var(--black); }
+  .auth-box p { color:var(--muted); font-size:0.9rem; margin-bottom:28px; }
+  .btn-google { display:flex; align-items:center; justify-content:center; gap:12px; width:100%; padding:14px; border:2px solid #e0e0e0; border-radius:12px; background:white; font-size:0.95rem; font-weight:600; cursor:pointer; transition:all .2s; color:#333; }
+  .btn-google:hover { border-color:#4285f4; background:#f8f9ff; box-shadow:0 2px 12px rgba(66,133,244,0.15); }
+  .btn-google svg { width:20px; height:20px; flex-shrink:0; }
+  .btn-local { background:none; border:none; color:var(--muted); font-size:0.82rem; cursor:pointer; margin-top:16px; text-decoration:underline; }
+  .btn-local:hover { color:var(--text); }
+  .auth-divider { display:flex; align-items:center; gap:10px; margin:20px 0; color:var(--muted); font-size:0.82rem; }
+  .auth-divider::before, .auth-divider::after { content:''; flex:1; height:1px; background:var(--border); }
+  .nav-user { display:flex; align-items:center; gap:8px; margin-left:auto; padding:6px 0; }
+  .nav-avatar { width:30px; height:30px; border-radius:50%; border:2px solid rgba(255,255,255,0.3); object-fit:cover; }
+  .nav-user-name { font-size:0.82rem; color:rgba(255,255,255,0.85); max-width:120px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .nav-logout { background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); color:rgba(255,255,255,0.7); border-radius:6px; padding:4px 10px; font-size:0.78rem; cursor:pointer; transition:all .2s; }
+  .nav-logout:hover { background:rgba(255,255,255,0.2); color:white; }
+  .sync-dot { width:7px; height:7px; border-radius:50%; background:var(--green); display:inline-block; margin-left:4px; }
+  .sync-dot.syncing { background:var(--gold); animation:pulse 1s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 </style>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
 </head>
 <body>
+
+<!-- AUTH OVERLAY -->
+<div class="auth-overlay" id="authOverlay">
+  <div class="auth-box">
+    <div class="flag">🇩🇪</div>
+    <h1>TELC B1 Подготовка</h1>
+    <p>Войди через Google чтобы сохранять прогресс<br>на всех устройствах</p>
+    <button class="btn-google" onclick="signInWithGoogle()">
+      <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+      Войти через Google
+    </button>
+    <div class="auth-divider">или</div>
+    <button class="btn-local" onclick="continueLocal()">Продолжить без входа (только на этом устройстве)</button>
+    <p id="authError" style="color:var(--red); font-size:0.82rem; margin-top:12px; display:none;"></p>
+  </div>
+</div>
 
 <nav class="nav">
   <div class="nav-logo">🇩🇪 <span>TELC B1</span></div>
@@ -234,8 +278,15 @@
   <button class="nav-btn" onclick="showPage('vocab')">📚 Слова</button>
   <button class="nav-btn" onclick="showPage('exercises')">✏️ Упражнения</button>
   <button class="nav-btn" onclick="showPage('trainer')">🧠 Тренажёр</button>
-  <div class="nav-progress">
+  <div class="nav-user" id="navUser" style="display:none;">
     <span class="xp-badge" id="xpBadge">⭐ 0 XP</span>
+    <span class="sync-dot" id="syncDot" title="Прогресс синхронизирован"></span>
+    <img class="nav-avatar" id="navAvatar" src="" alt="">
+    <span class="nav-user-name" id="navUserName"></span>
+    <button class="nav-logout" onclick="signOutUser()">Выйти</button>
+  </div>
+  <div class="nav-progress" id="navLocal">
+    <span class="xp-badge" id="xpBadgeLocal">⭐ 0 XP</span>
   </div>
 </nav>
 
@@ -2452,11 +2503,156 @@ showPage = function(id) {
 };
 
 // ============================================================
+// ============================================================
+// FIREBASE AUTH & SYNC
+// ============================================================
+
+// ── Paste your firebaseConfig here ──────────────────────────
+const FIREBASE_CONFIG = {
+  apiKey: "",
+  authDomain: "",
+  projectId: "",
+  storageBucket: "",
+  messagingSenderId: "",
+  appId: ""
+};
+// ────────────────────────────────────────────────────────────
+
+let db = null;
+let currentUser = null;
+let syncTimer = null;
+const FIREBASE_READY = FIREBASE_CONFIG.apiKey && FIREBASE_CONFIG.projectId;
+
+function initFirebase() {
+  if (!FIREBASE_READY) {
+    // No config → skip auth overlay, use local storage only
+    document.getElementById('authOverlay').style.display = 'none';
+    document.getElementById('navLocal').style.display = 'flex';
+    bootApp();
+    return;
+  }
+  try {
+    firebase.initializeApp(FIREBASE_CONFIG);
+    db = firebase.firestore();
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        currentUser = user;
+        document.getElementById('authOverlay').style.display = 'none';
+        showNavUser(user);
+        loadProgressFromFirestore(user.uid);
+      } else {
+        currentUser = null;
+        document.getElementById('authOverlay').style.display = 'flex';
+        document.getElementById('navUser').style.display = 'none';
+        document.getElementById('navLocal').style.display = 'none';
+      }
+    });
+  } catch(e) {
+    console.error('Firebase init error:', e);
+    document.getElementById('authOverlay').style.display = 'none';
+    document.getElementById('navLocal').style.display = 'flex';
+    bootApp();
+  }
+}
+
+function showNavUser(user) {
+  document.getElementById('navUser').style.display = 'flex';
+  document.getElementById('navLocal').style.display = 'none';
+  const avatar = document.getElementById('navAvatar');
+  const nameEl = document.getElementById('navUserName');
+  if (user.photoURL) { avatar.src = user.photoURL; avatar.style.display = 'block'; }
+  else { avatar.style.display = 'none'; }
+  nameEl.textContent = user.displayName ? user.displayName.split(' ')[0] : user.email;
+}
+
+async function signInWithGoogle() {
+  if (!FIREBASE_READY) return;
+  const errEl = document.getElementById('authError');
+  errEl.style.display = 'none';
+  try {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    await firebase.auth().signInWithPopup(provider);
+  } catch(e) {
+    errEl.textContent = 'Ошибка входа: ' + (e.message || e.code);
+    errEl.style.display = 'block';
+  }
+}
+
+function continueLocal() {
+  document.getElementById('authOverlay').style.display = 'none';
+  document.getElementById('navLocal').style.display = 'flex';
+  bootApp();
+}
+
+async function signOutUser() {
+  if (firebase && FIREBASE_READY) {
+    await firebase.auth().signOut();
+  }
+  currentUser = null;
+  document.getElementById('navUser').style.display = 'none';
+  document.getElementById('authOverlay').style.display = 'flex';
+}
+
+// Load progress from Firestore
+async function loadProgressFromFirestore(uid) {
+  setSyncDot('syncing');
+  try {
+    const doc = await db.collection('users').doc(uid).collection('progress').doc('state').get();
+    if (doc.exists) {
+      const remote = doc.data();
+      // Merge remote into local — remote wins, but keep any local-only keys
+      state = Object.assign({}, state, remote);
+      saveState(); // persist merged to localStorage too
+    }
+  } catch(e) {
+    console.error('Firestore load error:', e);
+  }
+  setSyncDot('ok');
+  bootApp();
+}
+
+// Save progress to Firestore (debounced 2s)
+function scheduleSyncToFirestore() {
+  if (!currentUser || !db) return;
+  setSyncDot('syncing');
+  clearTimeout(syncTimer);
+  syncTimer = setTimeout(async () => {
+    try {
+      await db.collection('users').doc(currentUser.uid)
+        .collection('progress').doc('state').set(state);
+      setSyncDot('ok');
+    } catch(e) {
+      console.error('Firestore save error:', e);
+      setSyncDot('ok');
+    }
+  }, 2000);
+}
+
+function setSyncDot(status) {
+  const dot = document.getElementById('syncDot');
+  if (!dot) return;
+  dot.className = 'sync-dot' + (status === 'syncing' ? ' syncing' : '');
+  dot.title = status === 'syncing' ? 'Сохранение...' : 'Прогресс сохранён';
+}
+
+// Override saveState to also sync to Firestore
+const _origSaveState = saveState;
+saveState = function() {
+  _origSaveState();
+  scheduleSyncToFirestore();
+};
+
+// ── Boot the app (called after auth resolved) ──
+function bootApp() {
+  updateHome();
+  renderVocab();
+  renderExercises();
+}
+
+// ============================================================
 // INIT
 // ============================================================
-updateHome();
-renderVocab();
-renderExercises();
+initFirebase();
 </script>
 </body>
 </html>
